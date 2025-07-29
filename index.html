@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Suivi de Travail</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Chargement de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Styles personnalisés pour les animations et les overrides spécifiques */
@@ -84,7 +83,6 @@
 </head>
 <body class="bg-blue-50 font-sans text-gray-800 leading-relaxed min-h-screen flex flex-col">
 
-    <!-- En-tête de l'application -->
     <header class="bg-gradient-to-r from-gray-800 to-blue-700 text-white p-6 text-center shadow-lg fixed top-0 w-full z-50 box-border h-20 flex items-center justify-between rounded-b-lg">
         <h1 class="flex-grow text-center m-0 text-3xl md:text-4xl lg:text-5xl font-extrabold">Suivi de Travail</h1>
         <div class="flex flex-col items-end gap-1">
@@ -94,7 +92,6 @@
         </div>
     </header>
 
-    <!-- Barre de navigation -->
     <nav class="flex flex-wrap justify-center bg-gray-700 shadow-md fixed top-20 w-full z-40 box-border h-12 rounded-b-md">
         <button class="nav-button bg-transparent text-white border-none px-4 py-2 cursor-pointer flex-grow text-lg transition-all duration-300 ease-in-out rounded hover:bg-blue-500 hover:translate-y-[-2px]" data-target="objectifs">🎯 Objectifs</button>
         <button class="nav-button bg-transparent text-white border-none px-4 py-2 cursor-pointer flex-grow text-lg transition-all duration-300 ease-in-out rounded hover:bg-blue-500 hover:translate-y-[-2px]" data-target="actions">📝 TO DO</button>
@@ -103,9 +100,7 @@
         <button class="nav-button bg-transparent text-white border-none px-4 py-2 cursor-pointer flex-grow text-lg transition-all duration-300 ease-in-out rounded hover:bg-blue-500 hover:translate-y-[-2px]" data-target="sharedItems">🌐 Partagés</button>
     </nav>
 
-    <!-- Contenu principal de l'application -->
     <main class="flex-grow pt-36 pb-8">
-        <!-- Section Objectifs -->
         <div id="objectifs" class="content hidden p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">Objectifs</h2>
             <input type="text" id="searchBarObjectifs" class="searchBar w-full p-3 mb-6 border border-gray-300 rounded-md box-border text-base focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none transition-all duration-300 ease-in-out" placeholder="Rechercher un objectif...">
@@ -113,7 +108,6 @@
             <div id="objectifList" class="grid-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4"></div>
         </div>
 
-        <!-- Section TO DO -->
         <div id="actions" class="content hidden p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">TO DO</h2>
             <input type="text" id="searchBarActions" class="searchBar w-full p-3 mb-6 border border-gray-300 rounded-md box-border text-base focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none transition-all duration-300 ease-in-out" placeholder="Rechercher une action...">
@@ -121,14 +115,12 @@
             <div id="actionList" class="grid-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4"></div>
         </div>
 
-        <!-- Section Actions terminées -->
         <div id="actionsTerminees" class="content hidden p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">Actions terminées</h2>
             <input type="text" id="searchBarActionsTerminees" class="searchBar w-full p-3 mb-6 border border-gray-300 rounded-md box-border text-base focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none transition-all duration-300 ease-in-out" placeholder="Rechercher une action terminée...">
             <div id="actionTermineeList" class="grid-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4"></div>
         </div>
 
-        <!-- Section Notes de réunion -->
         <div id="notesReunion" class="content hidden p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">Notes de réunion</h2>
             <input type="text" id="searchBarNotesReunion" class="searchBar w-full p-3 mb-6 border border-gray-300 rounded-md box-border text-base focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none transition-all duration-300 ease-in-out" placeholder="Rechercher une note...">
@@ -136,7 +128,6 @@
             <div id="notesReunionList" class="grid-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4"></div>
         </div>
 
-        <!-- Section Éléments Partagés -->
         <div id="sharedItems" class="content hidden p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">Éléments Partagés</h2>
             <p class="text-gray-700 mb-4">Ces éléments ont été partagés publiquement. Ils sont en lecture seule.</p>
@@ -145,10 +136,8 @@
         </div>
     </main>
 
-    <!-- Overlay pour les modales -->
     <div class="overlay hidden fixed inset-0 w-full h-full bg-black bg-opacity-60 z-[999] backdrop-blur-sm animate-fadein" id="overlay"></div>
 
-    <!-- Modale d'authentification -->
     <div id="authModal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg shadow-2xl z-[2000] max-w-md w-11/12 hidden animate-expand">
         <span class="close-button absolute top-4 right-5 text-3xl font-bold text-gray-400 cursor-pointer z-[1001] p-2 rounded-full leading-none transition-all duration-300 ease-in-out bg-white bg-opacity-20 hover:text-gray-200 hover:bg-opacity-40 hover:scale-110">&times;</span>
         <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Connexion / Inscription</h3>
@@ -177,20 +166,29 @@
         </div>
     </div>
 
-    <!-- Script JavaScript -->
     <script type="module">
         // Importe les modules Firebase nécessaires.
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
         import { getAuth, signInAnonymously, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
         import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, addDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
 
-        // Variables globales fournies par l'environnement Canvas
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyCFMC73NLlmTzGVGcK_-zTwwNyw6-jmr7Y",
+            authDomain: "suivitravailapp.firebaseapp.com",
+            projectId: "suivitravailapp",
+            storageBucket: "suivitravailapp.firebasestorage.app",
+            messagingSenderId: "621525076182",
+            appId: "1:621525076182:web:f5a9bc1f5aaae71ce7e177",
+            measurementId: "G-15HMDGYYCN"
+        };
 
-        // Initialise Firebase UNE SEULE FOIS
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        // const analytics = getAnalytics(app); // Analytics is imported but not used in the provided code, so commented out for now.
         const db = getFirestore(app);
         const auth = getAuth(app);
         const googleProvider = new GoogleAuthProvider();
@@ -890,7 +888,7 @@
                     newListener = { input: inputListener, change: changeListener };
                 } else if (field === 'historique_content') {
                     const blurListener = async () => {
-                        const docRef = doc(db, `artifacts/${appId}/users/${userId}/${collectionName}`, entryId);
+                        const docRef = doc(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${collectionName}`, entryId);
                         const docSnap = await getDoc(docRef);
                         const currentData = docSnap.data();
 
@@ -913,7 +911,7 @@
                     newListener.blur = blurListener;
                 } else if (field === 'tags') {
                     const blurListener = async () => {
-                        const docRef = doc(db, `artifacts/${appId}/users/${userId}/${collectionName}`, entryId);
+                        const docRef = doc(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${collectionName}`, entryId);
                         const docSnap = await getDoc(docRef);
                         const currentData = docSnap.data();
 
@@ -1000,7 +998,7 @@
                 return;
             }
 
-            const docRef = doc(db, `artifacts/${appId}/users/${userId}/${collectionName}`, id);
+            const docRef = doc(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${collectionName}`, id);
 
             try {
                 const docSnap = await getDoc(docRef);
@@ -1062,7 +1060,7 @@
             }
             if (collectionName !== COLLECTIONS.ACTIONS) return; // Cette fonction est spécifique aux actions
 
-            const docRef = doc(db, `artifacts/${appId}/users/${userId}/${collectionName}`, id);
+            const docRef = doc(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${collectionName}`, id);
 
             try {
                 const docSnap = await getDoc(docRef);
@@ -1108,7 +1106,7 @@
             const confirmDelete = await showModalMessage('Êtes-vous sûr de vouloir supprimer cette entrée ?', false, true);
 
             if (confirmDelete) {
-                const docRef = doc(db, `artifacts/${appId}/users/${userId}/${collectionName}`, id);
+                const docRef = doc(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${collectionName}`, id);
                 try {
                     await deleteDoc(docRef);
                     showToastNotification("Élément supprimé avec succès !", 'success');
@@ -1137,8 +1135,8 @@
                 return;
             }
 
-            const docRef = doc(db, `artifacts/${appId}/users/${userId}/${collectionName}`, id);
-            const publicCollectionRef = collection(db, `artifacts/${appId}/public/data/${COLLECTIONS.SHARED_ENTRIES}`);
+            const docRef = doc(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${collectionName}`, id);
+            const publicCollectionRef = collection(db, `artifacts/${firebaseConfig.appId}/public/data/${COLLECTIONS.SHARED_ENTRIES}`);
 
             try {
                 const docSnap = await getDoc(docRef);
@@ -1208,7 +1206,7 @@
 
             let targetCollectionRef;
             if (collectionName === COLLECTIONS.OBJECTIFS) {
-                targetCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/${COLLECTIONS.OBJECTIFS}`);
+                targetCollectionRef = collection(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${COLLECTIONS.OBJECTIFS}`);
                 titreInput = modalCard.querySelector('#modalObjectifTitre');
                 pourcentageInput = modalCard.querySelector('#modalObjectifPourcentage');
                 descriptionInput = modalCard.querySelector('#modalObjectifDescription');
@@ -1227,7 +1225,7 @@
                     return;
                 }
             } else if (collectionName === COLLECTIONS.ACTIONS) {
-                targetCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/${COLLECTIONS.ACTIONS}`);
+                targetCollectionRef = collection(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${COLLECTIONS.ACTIONS}`);
                 titreInput = modalCard.querySelector('#modalActionTitre');
                 deadLineInput = modalCard.querySelector('#modalActionDeadLine');
                 etapesContainer = modalCard.querySelector('.steps-list'); // Sélectionne le conteneur des étapes dans la modale
@@ -1236,8 +1234,8 @@
                 newEntry.titre = titreInput.value.trim();
                 newEntry.deadLine = deadLineInput.value;
                 newEntry.etapes = Array.from(etapesContainer.querySelectorAll('input[data-field="step-input"]'))
-                                         .map(input => input.value.trim())
-                                         .filter(step => step !== '');
+                                             .map(input => input.value.trim())
+                                             .filter(step => step !== '');
                 newEntry.isCompleted = false;
                 newEntry.tags = tagsInput.value.trim().split(',').map(tag => tag.trim()).filter(tag => tag);
 
@@ -1246,7 +1244,7 @@
                     return;
                 }
             } else if (collectionName === COLLECTIONS.NOTES_REUNION) {
-                targetCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/${COLLECTIONS.NOTES_REUNION}`);
+                targetCollectionRef = collection(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${COLLECTIONS.NOTES_REUNION}`);
                 titreInput = modalCard.querySelector('#modalNoteReunionTitre');
                 contenuInput = modalCard.querySelector('#modalNoteReunionContenu');
                 tagsInput = modalCard.querySelector('#modalNoteReunionTags');
@@ -1289,7 +1287,7 @@
                 showModalMessage("Erreur : ID d'élément invalide. Impossible de réintégrer.", true);
                 return;
             }
-            const docRef = doc(db, `artifacts/${appId}/users/${userId}/${COLLECTIONS.ACTIONS}`, id);
+            const docRef = doc(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${COLLECTIONS.ACTIONS}`, id);
             try {
                 const docSnap = await getDoc(docRef);
                 if (!docSnap.exists()) {
@@ -1326,7 +1324,7 @@
                 showModalMessage("Erreur : ID d'élément invalide. Impossible de marquer comme terminée.", true);
                 return;
             }
-            const docRef = doc(db, `artifacts/${appId}/users/${userId}/${COLLECTIONS.ACTIONS}`, id);
+            const docRef = doc(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${COLLECTIONS.ACTIONS}`, id);
             try {
                 const docSnap = await getDoc(docRef);
                 if (!docSnap.exists()) {
@@ -1366,8 +1364,8 @@
                 return;
             }
 
-            const fromDocRef = doc(db, `artifacts/${appId}/users/${userId}/${fromCollectionName}`, id);
-            const toCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/${toCollectionName}`);
+            const fromDocRef = doc(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${fromCollectionName}`, id);
+            const toCollectionRef = collection(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${toCollectionName}`);
 
             try {
                 const docSnap = await getDoc(fromDocRef);
@@ -1444,7 +1442,7 @@
             }
 
             // Écouteur d'Objectifs
-            onSnapshot(collection(db, `artifacts/${appId}/users/${userId}/${COLLECTIONS.OBJECTIFS}`), (snapshot) => {
+            onSnapshot(collection(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${COLLECTIONS.OBJECTIFS}`), (snapshot) => {
                 let data = [];
                 snapshot.forEach((doc) => {
                     data.push({ id: doc.id, ...doc.data() });
@@ -1456,7 +1454,7 @@
             });
 
             // Écouteur d'Actions (TO DO)
-            onSnapshot(collection(db, `artifacts/${appId}/users/${userId}/${COLLECTIONS.ACTIONS}`), (snapshot) => {
+            onSnapshot(collection(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${COLLECTIONS.ACTIONS}`), (snapshot) => {
                 let data = [];
                 snapshot.forEach((doc) => {
                     data.push({ id: doc.id, ...doc.data() });
@@ -1469,7 +1467,7 @@
             });
 
             // Écouteur de Notes de Réunion
-            onSnapshot(collection(db, `artifacts/${appId}/users/${userId}/${COLLECTIONS.NOTES_REUNION}`), (snapshot) => {
+            onSnapshot(collection(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${COLLECTIONS.NOTES_REUNION}`), (snapshot) => {
                 let data = [];
                 snapshot.forEach((doc) => {
                     data.push({ id: doc.id, ...doc.data() });
@@ -1481,7 +1479,7 @@
             });
 
             // Écouteur d'Éléments Partagés (Données Publiques)
-            onSnapshot(collection(db, `artifacts/${appId}/public/data/${COLLECTIONS.SHARED_ENTRIES}`), (snapshot) => {
+            onSnapshot(collection(db, `artifacts/${firebaseConfig.appId}/public/data/${COLLECTIONS.SHARED_ENTRIES}`), (snapshot) => {
                 let data = [];
                 snapshot.forEach((doc) => {
                     data.push({ id: doc.id, ...doc.data() });
@@ -1536,17 +1534,19 @@
 
         // Écouteurs d'événements pour DOMContentLoaded
         document.addEventListener('DOMContentLoaded', async () => {
-            // Tentative de connexion anonyme ou avec token personnalisé au démarrage
-            try {
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
+            // Tentative de connexion anonyme au démarrage (si pas déjà authentifié)
+            // Note: `signInWithCustomToken` and `__initial_auth_token` are typically for specific server-side authentication flows.
+            // For a basic client-side app, anonymous sign-in or direct email/Google sign-in is more common.
+            // If you intend to use custom tokens, ensure your backend provides them correctly.
+            if (!auth.currentUser) {
+                try {
                     await signInAnonymously(auth);
+                } catch (error) {
+                    console.error("Erreur lors de la connexion anonyme initiale:", error);
+                    showModalMessage("Erreur de connexion automatique. Veuillez vous connecter manuellement.", true);
                 }
-            } catch (error) {
-                console.error("Erreur lors de la connexion initiale:", error);
-                showModalMessage("Erreur de connexion automatique. Veuillez vous connecter manuellement.", true);
             }
+
 
             // Boutons de navigation
             document.querySelectorAll('nav button').forEach(button => {

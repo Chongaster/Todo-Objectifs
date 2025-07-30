@@ -191,7 +191,7 @@
 
     // --- VARIABLES GLOBALES ---
     let userId = null;
-    let expandedCard = null;
+    let expandedCardId = null; // **CORRECTION** : On stocke l'ID de la carte ouverte, pas l'élément
     let currentPageId = 'objectifs';
     let unsubscribeListeners = [];
     let allDataCache = {};
@@ -203,12 +203,11 @@
         NOTES_REUNION: 'notesReunion',
         SHARED_ENTRIES: 'shared_entries'
     };
+    const EXPANDED_CLASSES = ['expanded-card', 'fixed', 'top-1/2', 'left-1/2', '-translate-x-1/2', '-translate-y-1/2', 'w-[95%]', 'max-w-5xl', 'h-auto', 'max-h-[90vh]', 'overflow-y-auto', 'p-8', 'shadow-2xl', 'z-[1000]', 'animate-expand', 'border-2', 'border-blue-600', 'rounded-xl'];
 
     // --- SÉLECTEURS DOM ---
     const authModal = document.getElementById('authModal');
     const overlay = document.getElementById('overlay');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
     const mainContent = document.querySelector('main');
     const nav = document.querySelector('nav');
 
@@ -292,9 +291,10 @@
     function closeAuthModal() {
         if (auth.currentUser) {
             authModal.classList.add('hidden');
-            overlay.classList.add('hidden');
-            emailInput.value = '';
-            passwordInput.value = '';
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            if(emailInput) emailInput.value = '';
+            if(passwordInput) passwordInput.value = '';
         }
     }
     function detachRealtimeListeners() {
@@ -345,6 +345,7 @@
         const container = document.getElementById(containerId);
         if (!container) return;
 
+        const scrollPosition = container.scrollTop;
         container.innerHTML = '';
         let filteredData = data.filter(entry => {
             if (isAction && (!!entry.isCompleted !== displayCompleted)) return false;
@@ -367,13 +368,13 @@
 
         filteredData.forEach(entry => {
             const cardDiv = createCardElement(entry, type, isReadOnly);
-
-            // CORRECTION : Si la carte redessinée est celle qui était ouverte, on la ré-ouvre
-            if (expandedCard && expandedCard.dataset.id === entry.id) {
-                reExpandCard(cardDiv, isReadOnly);
+            // **CORRECTION** : Si la carte redessinée est celle qui était ouverte, on la ré-ouvre
+            if (expandedCardId === entry.id) {
+                expandCard(cardDiv, isReadOnly);
             }
             container.appendChild(cardDiv);
         });
+        container.scrollTop = scrollPosition;
     }
     
     // --- GESTION DE L'INTERFACE ---
@@ -390,21 +391,21 @@
         triggerRenderForCurrentPage();
     }
     function closeExpandedCard() {
-        if (expandedCard) {
-            overlay.classList.add('hidden');
-            if (expandedCard.dataset.type?.startsWith('new-')) {
-                expandedCard.remove();
+        const currentlyExpanded = document.querySelector('.expanded-card');
+        if (currentlyExpanded) {
+            if (currentlyExpanded.dataset.type?.startsWith('new-')) {
+                currentlyExpanded.remove();
             } else {
-                expandedCard.classList.remove('expanded-card', 'fixed', 'top-1/2', 'left-1/2', '-translate-x-1/2', '-translate-y-1/2', 'w-[95%]', 'max-w-5xl', 'h-auto', 'max-h-[90vh]', 'overflow-y-auto', 'p-8', 'shadow-2xl', 'z-[1000]', 'animate-expand', 'border-2', 'border-blue-600', 'rounded-xl');
-                const hiddenDetail = expandedCard.querySelector('.hidden-detail');
-                if (hiddenDetail) hiddenDetail.classList.add('hidden');
-                expandedCard.querySelector('.close-button')?.remove();
+                currentlyExpanded.classList.remove(...EXPANDED_CLASSES);
+                currentlyExpanded.querySelector('.hidden-detail')?.classList.add('hidden');
+                currentlyExpanded.querySelector('.close-button')?.remove();
             }
-            expandedCard = null;
         }
+        overlay.classList.add('hidden');
+        expandedCardId = null;
     }
-    function reExpandCard(cardElement, isReadOnly) {
-        cardElement.classList.add('expanded-card', 'fixed', 'top-1/2', 'left-1/2', '-translate-x-1/2', '-translate-y-1/2', 'w-[95%]', 'max-w-5xl', 'h-auto', 'max-h-[90vh]', 'overflow-y-auto', 'p-8', 'shadow-2xl', 'z-[1000]', 'animate-expand', 'border-2', 'border-blue-600', 'rounded-xl');
+    function expandCard(cardElement, isReadOnly) {
+        cardElement.classList.add(...EXPANDED_CLASSES);
         cardElement.querySelector('.hidden-detail')?.classList.remove('hidden');
         overlay.classList.remove('hidden');
         const closeButton = document.createElement('span');
@@ -413,12 +414,17 @@
         closeButton.onclick = (e) => { e.stopPropagation(); closeExpandedCard(); };
         cardElement.appendChild(closeButton);
         if (!isReadOnly) addCardEventListeners(cardElement, cardElement.dataset.type, cardElement.dataset.id);
-        expandedCard = cardElement; // Ré-assigne la référence globale
+        expandedCardId = cardElement.dataset.id;
     }
     function toggleCardExpansion(event, cardElement, isReadOnly = false) {
         if (event.target.closest('.actions button, [contenteditable="true"], textarea, input, .tag-item, .add-step-card-btn, .remove-step')) return;
-        if (expandedCard && expandedCard !== cardElement) closeExpandedCard();
-        cardElement.classList.contains('expanded-card') ? closeExpandedCard() : reExpandCard(cardElement, isReadOnly);
+        const cardId = cardElement.dataset.id;
+        if (expandedCardId && expandedCardId !== cardId) closeExpandedCard();
+        if (cardElement.classList.contains('expanded-card')) {
+            closeExpandedCard();
+        } else {
+            expandCard(cardElement, isReadOnly);
+        }
     }
     function createCardElement(entry, type, isReadOnly) {
         const cardDiv = document.createElement('div');
@@ -486,26 +492,26 @@
     }
 
     // --- LOGIQUE MÉTIER (CRUD, etc.) ---
-    async function addEntry(collectionName) {
-        if (!userId || !expandedCard) return;
+    async function addEntry(collectionName, modalNode) {
+        if (!userId) return;
         let newEntry = { historique: [`Créé le ${getTimeStamp()}`] };
         try {
             if (collectionName === COLLECTIONS.OBJECTIFS) {
-                newEntry.titre = expandedCard.querySelector('#modalObjectifTitre').value.trim();
-                newEntry.pourcentage = parseInt(expandedCard.querySelector('#modalObjectifPourcentage').value) || 0;
-                newEntry.description = expandedCard.querySelector('#modalObjectifDescription').value.trim();
-                newEntry.progressComments = expandedCard.querySelector('#modalObjectifProgressComments').value.trim();
-                newEntry.tags = expandedCard.querySelector('#modalObjectifTags').value.split(',').map(t => t.trim()).filter(Boolean);
+                newEntry.titre = modalNode.querySelector('#modalObjectifTitre').value.trim();
+                newEntry.pourcentage = parseInt(modalNode.querySelector('#modalObjectifPourcentage').value) || 0;
+                newEntry.description = modalNode.querySelector('#modalObjectifDescription').value.trim();
+                newEntry.progressComments = modalNode.querySelector('#modalObjectifProgressComments').value.trim();
+                newEntry.tags = modalNode.querySelector('#modalObjectifTags').value.split(',').map(t => t.trim()).filter(Boolean);
             } else if (collectionName === COLLECTIONS.ACTIONS) {
-                newEntry.titre = expandedCard.querySelector('#modalActionTitre').value.trim();
-                newEntry.deadLine = expandedCard.querySelector('#modalActionDeadLine').value;
-                newEntry.etapes = Array.from(expandedCard.querySelectorAll('input[data-field="step-input"]')).map(i => i.value.trim()).filter(Boolean);
+                newEntry.titre = modalNode.querySelector('#modalActionTitre').value.trim();
+                newEntry.deadLine = modalNode.querySelector('#modalActionDeadLine').value;
+                newEntry.etapes = Array.from(modalNode.querySelectorAll('input[data-field="step-input"]')).map(i => i.value.trim()).filter(Boolean);
                 newEntry.isCompleted = false;
-                newEntry.tags = expandedCard.querySelector('#modalActionTags').value.split(',').map(t => t.trim()).filter(Boolean);
+                newEntry.tags = modalNode.querySelector('#modalActionTags').value.split(',').map(t => t.trim()).filter(Boolean);
             } else if (collectionName === COLLECTIONS.NOTES_REUNION) {
-                newEntry.titre = expandedCard.querySelector('#modalNoteReunionTitre').value.trim();
-                newEntry.contenu = expandedCard.querySelector('#modalNoteReunionContenu').value.trim();
-                newEntry.tags = expandedCard.querySelector('#modalNoteReunionTags').value.split(',').map(t => t.trim()).filter(Boolean);
+                newEntry.titre = modalNode.querySelector('#modalNoteReunionTitre').value.trim();
+                newEntry.contenu = modalNode.querySelector('#modalNoteReunionContenu').value.trim();
+                newEntry.tags = modalNode.querySelector('#modalNoteReunionTags').value.split(',').map(t => t.trim()).filter(Boolean);
             }
             if (!newEntry.titre) throw new Error("Le titre est obligatoire.");
             const collectionRef = collection(db, `artifacts/${firebaseConfig.appId}/users/${userId}/${collectionName}`);
@@ -534,7 +540,7 @@
             if (!silent) updates.historique = [...(docSnap.data().historique || []), `Champ '${field}' mis à jour le ${getTimeStamp()}`];
             await updateDoc(docRef, updates);
             if (!silent) showToastNotification("Mise à jour réussie.", 'success');
-        } catch (error) { showModalMessage(`Erreur: ${error.message}`, true); }
+        } catch (error) { showModalMessage(`Erreur de mise à jour: ${error.message}`, true); }
     }
     async function markAsCompleted(id) {
         if (!userId) return;
@@ -603,7 +609,7 @@
         if (!userId) return showModalMessage("Veuillez vous connecter.", true);
         closeExpandedCard();
         const modalCard = document.createElement('div');
-        modalCard.className = 'card expanded-card fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] max-w-5xl h-auto max-h-[90vh] overflow-y-auto p-8 shadow-2xl z-[1000] animate-expand border-2 border-blue-600 rounded-xl bg-white';
+        modalCard.className = `card bg-white ${EXPANDED_CLASSES.join(' ')}`;
         modalCard.dataset.type = 'new-' + type;
         let title = '', formHtml = '';
         if (type === COLLECTIONS.OBJECTIFS) {
@@ -619,10 +625,9 @@
         modalCard.innerHTML = `<span class="close-button absolute top-4 right-5 text-3xl cursor-pointer">&times;</span><div class="p-6 mt-8"><h3 class="text-xl font-bold mb-6 border-b-2 pb-2">${title}</h3>${formHtml}<div class="flex justify-center gap-3 mt-6 pt-4"><button class="submit bg-green-600 text-white font-bold py-2 px-4 rounded">➕ Ajouter</button><button class="cancel bg-gray-500 text-white font-bold py-2 px-4 rounded">Annuler</button></div></div>`;
         document.body.appendChild(modalCard);
         overlay.classList.remove('hidden');
-        expandedCard = modalCard;
         modalCard.querySelector('.close-button').addEventListener('click', closeExpandedCard);
         modalCard.querySelector('.cancel').addEventListener('click', closeExpandedCard);
-        modalCard.querySelector('.submit').addEventListener('click', () => addEntry(type));
+        modalCard.querySelector('.submit').addEventListener('click', () => addEntry(type, modalCard));
         if (type === COLLECTIONS.ACTIONS) {
             const stepsContainer = modalCard.querySelector('.steps-list');
             modalCard.querySelector('#modalAddStepBtn').addEventListener('click', () => addStepInput(stepsContainer, '', 0, true));
@@ -632,15 +637,23 @@
 
     // --- INITIALISATION DES ÉVÉNEMENTS ---
     function initializeEventListeners() {
-        document.querySelectorAll('nav .nav-button').forEach(b => b.addEventListener('click', () => showPage(b.dataset.target)));
-        document.querySelectorAll('.add-new-item-btn').forEach(b => b.addEventListener('click', () => openNewItemModal(b.dataset.type)));
-        document.querySelectorAll('.searchBar').forEach(b => b.addEventListener('keyup', triggerRenderForCurrentPage));
+        nav.addEventListener('click', e => {
+            if (e.target.matches('.nav-button')) showPage(e.target.dataset.target);
+        });
+        mainContent.addEventListener('click', e => {
+            if (e.target.matches('.add-new-item-btn')) openNewItemModal(e.target.dataset.type);
+        });
+        mainContent.addEventListener('keyup', e => {
+            if(e.target.matches('.searchBar')) triggerRenderForCurrentPage();
+        });
+        
         overlay.addEventListener('click', () => { closeExpandedCard(); closeAuthModal(); });
-        document.getElementById('authBtn').addEventListener('click', openAuthModal);
-        authModal.querySelector('.close-button').addEventListener('click', closeAuthModal);
-        document.getElementById('signInEmailBtn').addEventListener('click', async () => { try { await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value); } catch (e) { showModalMessage(`Erreur: ${e.message}`, true); } });
-        document.getElementById('signUpEmailBtn').addEventListener('click', async () => { try { await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value); } catch (e) { showModalMessage(`Erreur: ${e.message}`, true); } });
-        document.getElementById('signInGoogleBtn').addEventListener('click', async () => { try { await signInWithPopup(auth, googleProvider); } catch (e) { showModalMessage(`Erreur: ${e.message}`, true); } });
+        
+        const authContainer = document.getElementById('authModal');
+        authContainer.querySelector('.close-button').addEventListener('click', closeAuthModal);
+        authContainer.querySelector('#signInEmailBtn').addEventListener('click', async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch (e) { showModalMessage(`Erreur: ${e.message}`, true); } });
+        authContainer.querySelector('#signUpEmailBtn').addEventListener('click', async () => { try { await createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch (e) { showModalMessage(`Erreur: ${e.message}`, true); } });
+        authContainer.querySelector('#signInGoogleBtn').addEventListener('click', async () => { try { await signInWithPopup(auth, googleProvider); } catch (e) { showModalMessage(`Erreur: ${e.message}`, true); } });
         document.getElementById('signOutBtn').addEventListener('click', async () => { try { await signOut(auth); } catch (e) { showModalMessage(`Erreur: ${e.message}`, true); } });
     }
     

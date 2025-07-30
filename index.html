@@ -92,7 +92,7 @@
         </div>
     </header>
 
-    <nav class="flex flex-wrap justify-center bg-gray-700 shadow-md fixed top-20 w-full z-40 box-border h-12 rounded-b-md">
+    <nav class="flex flex-wrap justify-center bg-gray-700 shadow-md fixed top-20 w-full z-40 box-border h-12 rounded-b-md hidden">
         <button class="nav-button bg-transparent text-white border-none px-4 py-2 cursor-pointer flex-grow text-lg transition-all duration-300 ease-in-out rounded hover:bg-blue-500 hover:translate-y-[-2px]" data-target="objectifs">🎯 Objectifs</button>
         <button class="nav-button bg-transparent text-white border-none px-4 py-2 cursor-pointer flex-grow text-lg transition-all duration-300 ease-in-out rounded hover:bg-blue-500 hover:translate-y-[-2px]" data-target="actions">📝 TO DO</button>
         <button class="nav-button bg-transparent text-white border-none px-4 py-2 cursor-pointer flex-grow text-lg transition-all duration-300 ease-in-out rounded hover:bg-blue-500 hover:translate-y-[-2px]" data-target="actionsTerminees">✅ Actions terminées</button>
@@ -100,7 +100,7 @@
         <button class="nav-button bg-transparent text-white border-none px-4 py-2 cursor-pointer flex-grow text-lg transition-all duration-300 ease-in-out rounded hover:bg-blue-500 hover:translate-y-[-2px]" data-target="sharedItems">🌐 Partagés</button>
     </nav>
 
-    <main class="flex-grow pt-36 pb-8">
+    <main class="flex-grow pt-36 pb-8 hidden">
         <div id="objectifs" class="content hidden p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">Objectifs</h2>
             <input type="text" id="searchBarObjectifs" class="searchBar w-full p-3 mb-6 border border-gray-300 rounded-md box-border text-base focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none transition-all duration-300 ease-in-out" placeholder="Rechercher un objectif...">
@@ -169,7 +169,7 @@
     <script type="module">
         // Importe les modules Firebase nécessaires.
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-        import { getAuth, signInAnonymously, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+        import { getAuth, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
         import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, addDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
@@ -1234,8 +1234,8 @@
                 newEntry.titre = titreInput.value.trim();
                 newEntry.deadLine = deadLineInput.value;
                 newEntry.etapes = Array.from(etapesContainer.querySelectorAll('input[data-field="step-input"]'))
-                                             .map(input => input.value.trim())
-                                             .filter(step => step !== '');
+                                            .map(input => input.value.trim())
+                                            .filter(step => step !== '');
                 newEntry.isCompleted = false;
                 newEntry.tags = tagsInput.value.trim().split(',').map(tag => tag.trim()).filter(tag => tag);
 
@@ -1511,43 +1511,47 @@
 
         // Écoute les changements d'état d'authentification
         onAuthStateChanged(auth, async (user) => {
+            const mainContent = document.querySelector('main');
+            const nav = document.querySelector('nav');
+            const authModalCloseBtn = authModal.querySelector('.close-button');
+
             if (user) {
+                // L'utilisateur est connecté
                 userId = user.uid;
-                userIdDisplay.innerText = `Utilisateur: ${user.email || user.uid}`; // Affiche l'email ou l'UID
+                userIdDisplay.innerText = `Utilisateur: ${user.email || user.uid}`;
                 authBtn.classList.add('hidden');
                 signOutBtn.classList.remove('hidden');
-                isAuthReady = true;
+
+                // Cache la modale de connexion et affiche le contenu de l'application
                 closeAuthModal();
-                setupRealtimeListeners(); // Met en place les écouteurs lorsque l'utilisateur est authentifié
-                showPage(currentPageId); // Recharge la page actuelle pour afficher les données
+                mainContent.classList.remove('hidden');
+                nav.classList.remove('hidden');
+                authModalCloseBtn.classList.remove('hidden'); // Assure que le bouton fermer est visible
+
+                isAuthReady = true;
+                setupRealtimeListeners(); // Lance les écouteurs pour les données
+                showPage(currentPageId); // Affiche la dernière page visitée ou la page par défaut
             } else {
+                // L'utilisateur est déconnecté
                 userId = null;
                 userIdDisplay.innerText = 'Non connecté';
                 authBtn.classList.remove('hidden');
                 signOutBtn.classList.add('hidden');
+                
+                // Cache le contenu de l'application et force l'affichage de la modale de connexion
+                mainContent.classList.add('hidden');
+                nav.classList.add('hidden');
+                openAuthModal();
+                authModalCloseBtn.classList.add('hidden'); // Masque le bouton fermer pour obliger à se connecter
+
                 isAuthReady = false;
-                // Efface l'UI ou affiche un message de connexion/inscription
-                document.querySelectorAll('.grid-container').forEach(container => container.innerHTML = '<p class="text-center text-gray-600 mt-12">Veuillez vous connecter pour voir vos données.</p>');
-                showPage('objectifs'); // Affiche la page par défaut sans données utilisateur
+                // Vide les listes affichées
+                document.querySelectorAll('.grid-container').forEach(container => container.innerHTML = '');
             }
         });
 
         // Écouteurs d'événements pour DOMContentLoaded
         document.addEventListener('DOMContentLoaded', async () => {
-            // Tentative de connexion anonyme au démarrage (si pas déjà authentifié)
-            // Note: `signInWithCustomToken` and `__initial_auth_token` are typically for specific server-side authentication flows.
-            // For a basic client-side app, anonymous sign-in or direct email/Google sign-in is more common.
-            // If you intend to use custom tokens, ensure your backend provides them correctly.
-            if (!auth.currentUser) {
-                try {
-                    await signInAnonymously(auth);
-                } catch (error) {
-                    console.error("Erreur lors de la connexion anonyme initiale:", error);
-                    showModalMessage("Erreur de connexion automatique. Veuillez vous connecter manuellement.", true);
-                }
-            }
-
-
             // Boutons de navigation
             document.querySelectorAll('nav button').forEach(button => {
                 button.addEventListener('click', () => showPage(button.dataset.target));
@@ -1560,17 +1564,20 @@
                 });
             });
 
-            // Écouteurs de la barre de recherche (déclenchent un re-rendu via onSnapshot)
-            document.getElementById('searchBarObjectifs').addEventListener('keyup', () => setupRealtimeListeners());
-            document.getElementById('searchBarActions').addEventListener('keyup', () => setupRealtimeListeners());
-            document.getElementById('searchBarActionsTerminees').addEventListener('keyup', () => setupRealtimeListeners());
-            document.getElementById('searchBarNotesReunion').addEventListener('keyup', () => setupRealtimeListeners());
-            document.getElementById('searchBarSharedItems').addEventListener('keyup', () => setupRealtimeListeners());
+            // Écouteurs de la barre de recherche
+            document.getElementById('searchBarObjectifs').addEventListener('keyup', () => renderEntries(COLLECTIONS.OBJECTIFS, 'objectifList', false, false, []));
+            document.getElementById('searchBarActions').addEventListener('keyup', () => renderEntries(COLLECTIONS.ACTIONS, 'actionList', true, false, []));
+            document.getElementById('searchBarActionsTerminees').addEventListener('keyup', () => renderEntries('actionsTerminees', 'actionTermineeList', true, true, []));
+            document.getElementById('searchBarNotesReunion').addEventListener('keyup', () => renderEntries(COLLECTIONS.NOTES_REUNION, 'notesReunionList', false, false, []));
+            document.getElementById('searchBarSharedItems').addEventListener('keyup', () => renderEntries(COLLECTIONS.SHARED_ENTRIES, 'sharedItemList', false, false, [], true));
 
             // Clic sur l'overlay pour fermer la carte étendue ou la modale d'authentification
             overlay.addEventListener('click', () => {
-                closeExpandedCard();
-                closeAuthModal();
+                // N'autorise la fermeture que si l'utilisateur est connecté
+                if (auth.currentUser) {
+                    closeExpandedCard();
+                    closeAuthModal();
+                }
             });
 
             // Écouteurs de la modale d'authentification

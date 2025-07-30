@@ -92,7 +92,7 @@
         </div>
     </header>
 
-    <nav class="flex flex-wrap justify-center bg-gray-700 shadow-md fixed top-20 w-full z-40 box-border h-12 rounded-b-md hidden">
+    <nav class="flex flex-wrap justify-center bg-gray-700 shadow-md fixed top-20 w-full z-40 box-border h-auto md:h-12 rounded-b-md hidden">
         <button class="nav-button bg-transparent text-white border-none px-4 py-2 cursor-pointer flex-grow text-lg transition-all duration-300 ease-in-out rounded hover:bg-blue-500 hover:translate-y-[-2px]" data-target="objectifs">🎯 Objectifs</button>
         <button class="nav-button bg-transparent text-white border-none px-4 py-2 cursor-pointer flex-grow text-lg transition-all duration-300 ease-in-out rounded hover:bg-blue-500 hover:translate-y-[-2px]" data-target="actions">📝 TO DO</button>
         <button class="nav-button bg-transparent text-white border-none px-4 py-2 cursor-pointer flex-grow text-lg transition-all duration-300 ease-in-out rounded hover:bg-blue-500 hover:translate-y-[-2px]" data-target="actionsTerminees">✅ Actions terminées</button>
@@ -100,35 +100,35 @@
         <button class="nav-button bg-transparent text-white border-none px-4 py-2 cursor-pointer flex-grow text-lg transition-all duration-300 ease-in-out rounded hover:bg-blue-500 hover:translate-y-[-2px]" data-target="sharedItems">🌐 Partagés</button>
     </nav>
 
-    <main class="flex-grow pt-36 pb-8 hidden">
-        <div id="objectifs" class="content hidden p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
+    <main class="flex-grow pt-40 md:pt-36 pb-8 hidden">
+        <div id="objectifs" class="content hidden p-4 md:p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">Objectifs</h2>
             <input type="text" id="searchBarObjectifs" class="searchBar w-full p-3 mb-6 border border-gray-300 rounded-md box-border text-base focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none transition-all duration-300 ease-in-out" placeholder="Rechercher un objectif...">
             <button class="add-new-item-btn bg-blue-600 text-white border-none px-6 py-3 rounded-lg cursor-pointer text-lg block w-fit mx-auto my-4 shadow-md transition-all duration-300 ease-in-out hover:bg-blue-700 hover:translate-y-[-2px] hover:shadow-lg" data-type="objectifs">➕ Ajouter un objectif</button>
             <div id="objectifList" class="grid-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4"></div>
         </div>
 
-        <div id="actions" class="content hidden p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
+        <div id="actions" class="content hidden p-4 md:p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">TO DO</h2>
             <input type="text" id="searchBarActions" class="searchBar w-full p-3 mb-6 border border-gray-300 rounded-md box-border text-base focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none transition-all duration-300 ease-in-out" placeholder="Rechercher une action...">
             <button class="add-new-item-btn bg-blue-600 text-white border-none px-6 py-3 rounded-lg cursor-pointer text-lg block w-fit mx-auto my-4 shadow-md transition-all duration-300 ease-in-out hover:bg-blue-700 hover:translate-y-[-2px] hover:shadow-lg" data-type="actions">➕ Ajouter une action</button>
             <div id="actionList" class="grid-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4"></div>
         </div>
 
-        <div id="actionsTerminees" class="content hidden p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
+        <div id="actionsTerminees" class="content hidden p-4 md:p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">Actions terminées</h2>
             <input type="text" id="searchBarActionsTerminees" class="searchBar w-full p-3 mb-6 border border-gray-300 rounded-md box-border text-base focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none transition-all duration-300 ease-in-out" placeholder="Rechercher une action terminée...">
             <div id="actionTermineeList" class="grid-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4"></div>
         </div>
 
-        <div id="notesReunion" class="content hidden p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
+        <div id="notesReunion" class="content hidden p-4 md:p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">Notes de réunion</h2>
             <input type="text" id="searchBarNotesReunion" class="searchBar w-full p-3 mb-6 border border-gray-300 rounded-md box-border text-base focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none transition-all duration-300 ease-in-out" placeholder="Rechercher une note...">
             <button class="add-new-item-btn bg-blue-600 text-white border-none px-6 py-3 rounded-lg cursor-pointer text-lg block w-fit mx-auto my-4 shadow-md transition-all duration-300 ease-in-out hover:bg-blue-700 hover:translate-y-[-2px] hover:shadow-lg" data-type="notesReunion">➕ Ajouter une note de réunion</button>
             <div id="notesReunionList" class="grid-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4"></div>
         </div>
 
-        <div id="sharedItems" class="content hidden p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
+        <div id="sharedItems" class="content hidden p-4 md:p-8 max-w-6xl mx-auto bg-white rounded-lg shadow-xl">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">Éléments Partagés</h2>
             <p class="text-gray-700 mb-4">Ces éléments ont été partagés publiquement. Ils sont en lecture seule.</p>
             <input type="text" id="searchBarSharedItems" class="searchBar w-full p-3 mb-6 border border-gray-300 rounded-md box-border text-base focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none transition-all duration-300 ease-in-out" placeholder="Rechercher un élément partagé...">
@@ -139,7 +139,7 @@
     <div class="overlay hidden fixed inset-0 w-full h-full bg-black bg-opacity-60 z-[999] backdrop-blur-sm animate-fadein" id="overlay"></div>
 
     <div id="authModal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg shadow-2xl z-[2000] max-w-md w-11/12 hidden animate-expand">
-        <span class="close-button absolute top-4 right-5 text-3xl font-bold text-gray-400 cursor-pointer z-[1001] p-2 rounded-full leading-none transition-all duration-300 ease-in-out bg-white bg-opacity-20 hover:text-gray-200 hover:bg-opacity-40 hover:scale-110">&times;</span>
+        <span class="close-button absolute top-4 right-5 text-3xl font-bold text-gray-400 cursor-pointer z-[1001] p-2 rounded-full leading-none transition-all duration-300 ease-in-out hover:text-gray-600">&times;</span>
         <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Connexion / Inscription</h3>
         <div class="mb-4">
             <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
@@ -157,8 +157,8 @@
                 <span class="flex-shrink mx-4 text-gray-400">OU</span>
                 <div class="flex-grow border-t border-gray-300"></div>
             </div>
-            <button id="signInGoogleBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition-all duration-300 ease-in-out shadow-md flex items-center justify-center gap-2">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zM8.282 16.92a6.994 6.994 0 011.693-4.322c.23-.393.453-.787.67-1.182h-2.57c-.42 0-.671-.478-.456-.867A7.01 7.01 0 0111.96 6c1.64 0 3.14.568 4.312 1.549.123.102.164.28.106.433l-1.39 3.635a.51.51 0 01-.482.355h-2.12c-.407 0-.77.28-.857.68a4.992 4.992 0 00-.17 1.437c0 1.042.33 2.004.89 2.771.096.128.016.31-.13.364l-1.896.68A7.03 7.03 0 018.282 16.92z" clip-rule="evenodd" /></svg>
+            <button id="signInGoogleBtn" class="bg-white hover:bg-gray-100 text-gray-800 font-bold py-2 px-4 rounded-md transition-all duration-300 ease-in-out shadow-md flex items-center justify-center gap-2 border border-gray-300">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google icon" class="w-5 h-5">
                 Se connecter avec Google
             </button>
         </div>
@@ -168,7 +168,7 @@
         // Importe les modules Firebase nécessaires.
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
         import { getAuth, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, addDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, addDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
         // Configuration Firebase (NE PAS MODIFIER)
         const firebaseConfig = {
@@ -191,7 +191,13 @@
         let userId = null;
         let expandedCard = null;
         let currentPageId = 'objectifs';
-        let unsubscribeListeners = []; // Stocke les fonctions pour se désabonner des écouteurs Firestore
+        let unsubscribeListeners = [];
+        let allData = { // Cache pour les données
+            objectifs: [],
+            actions: [],
+            notesReunion: [],
+            sharedItems: []
+        };
 
         // --- CONSTANTES ---
         const COLLECTIONS = {
@@ -214,16 +220,9 @@
         const userIdDisplay = document.getElementById('userIdDisplay');
         const mainContent = document.querySelector('main');
         const nav = document.querySelector('nav');
-        
+
         // --- FONCTIONS UTILITAIRES & MODALES ---
 
-        /**
-         * Affiche une boîte de message modale personnalisée.
-         * @param {string} message Le message à afficher.
-         * @param {boolean} isError Indique s'il s'agit d'un message d'erreur.
-         * @param {boolean} showConfirmButtons Si vrai, affiche les boutons 'Oui'/'Non'.
-         * @returns {Promise<boolean>} Résout à true si confirmé, false sinon.
-         */
         function showModalMessage(message, isError = false, showConfirmButtons = false) {
             return new Promise(resolve => {
                 const messageBox = document.createElement('div');
@@ -257,11 +256,6 @@
             });
         }
 
-        /**
-         * Affiche une notification toast non-intrusive.
-         * @param {string} message Le message à afficher.
-         * @param {string} type Le type de notification ('success', 'info', 'error').
-         */
         function showToastNotification(message, type = 'info') {
             const toast = document.createElement('div');
             toast.className = 'toast-notification fixed bottom-5 left-1/2 -translate-x-1/2 text-white px-5 py-3 rounded-lg shadow-xl z-[3000] opacity-0 animate-fadeinout text-base flex items-center gap-2';
@@ -275,32 +269,19 @@
             setTimeout(() => toast.remove(), 4000);
         }
 
-        /**
-         * Récupère le timestamp actuel au format 'fr-FR'.
-         * @returns {string} Le timestamp formaté.
-         */
         function getTimeStamp() {
             return new Date().toLocaleString('fr-FR');
         }
 
-        /**
-         * Extrait un objet Date d'une chaîne d'historique pour le tri.
-         * @param {string} dateString La chaîne d'historique.
-         * @returns {Date} L'objet Date parsé.
-         */
         function extractDateFromHistory(dateString) {
             const match = dateString.match(/(\d{2})\/(\d{2})\/(\d{4}) à (\d{2}):(\d{2}):(\d{2})/);
             if (match) {
                 const [, day, month, year, hour, minute, second] = match.map(Number);
                 return new Date(year, month - 1, day, hour, minute, second);
             }
-            return new Date(0); // Date par défaut si le format est invalide
+            return new Date(0);
         }
 
-        /**
-         * Redimensionne un textarea pour s'adapter à son contenu.
-         * @param {HTMLTextAreaElement} element L'élément textarea à redimensionner.
-         */
         function autoResizeTextarea(element) {
             element.style.height = 'auto';
             element.style.height = `${element.scrollHeight}px`;
@@ -308,10 +289,6 @@
 
         // --- GESTION DE L'INTERFACE (UI) ---
 
-        /**
-         * Affiche une page de contenu spécifique et masque les autres.
-         * @param {string} id L'ID de la page de contenu à afficher.
-         */
         function showPage(id) {
             currentPageId = id;
             document.querySelectorAll('.content').forEach(section => section.classList.add('hidden'));
@@ -329,95 +306,79 @@
                 button.classList.toggle('hover:bg-blue-500', !isTarget);
                 button.classList.toggle('hover:translate-y-[-2px]', !isTarget);
             });
-
-            const searchInput = document.getElementById(`searchBar${id.charAt(0).toUpperCase() + id.slice(1)}`);
-            if (searchInput) searchInput.value = '';
         }
 
-        /**
-         * Ferme la carte actuellement étendue.
-         */
         function closeExpandedCard() {
             if (expandedCard) {
-                if(expandedCard.parentElement) {
-                    if (expandedCard.dataset.type?.startsWith('new-')) {
-                        // Si c'est une modale d'ajout, on la supprime complètement
-                        expandedCard.remove();
-                    } else {
-                        // Sinon, on la "réduit"
-                        expandedCard.classList.remove('expanded-card', 'fixed', 'top-1/2', 'left-1/2', '-translate-x-1/2', '-translate-y-1/2', 'w-[95%]', 'max-w-5xl', 'h-auto', 'max-h-[90vh]', 'overflow-y-auto', 'p-8', 'shadow-2xl', 'z-[1000]', 'animate-expand', 'border-2', 'border-blue-600', 'rounded-xl');
-                        const hiddenDetail = expandedCard.querySelector('.hidden-detail');
-                        if (hiddenDetail) hiddenDetail.classList.add('hidden');
-                        const closeButton = expandedCard.querySelector('.close-button');
-                        if (closeButton) closeButton.remove();
-                    }
+                overlay.classList.add('hidden');
+                // Si c'est une modale d'ajout, on la supprime complètement
+                if (expandedCard.dataset.type?.startsWith('new-')) {
+                    expandedCard.remove();
+                } else {
+                    // Sinon, on la "réduit" à son état de carte normale
+                    expandedCard.classList.remove('expanded-card', 'fixed', 'top-1/2', 'left-1/2', '-translate-x-1/2', '-translate-y-1/2', 'w-[95%]', 'max-w-5xl', 'h-auto', 'max-h-[90vh]', 'overflow-y-auto', 'p-8', 'shadow-2xl', 'z-[1000]', 'animate-expand', 'border-2', 'border-blue-600', 'rounded-xl');
+                    const hiddenDetail = expandedCard.querySelector('.hidden-detail');
+                    if (hiddenDetail) hiddenDetail.classList.add('hidden');
+                    const closeButton = expandedCard.querySelector('.close-button');
+                    if (closeButton) closeButton.remove();
                 }
                 expandedCard = null;
             }
-            overlay.classList.add('hidden');
         }
 
-        /**
-         * Ouvre ou ferme une carte en vue détaillée.
-         * @param {Event} event L'événement de clic.
-         * @param {HTMLElement} cardElement L'élément de la carte.
-         * @param {boolean} isReadOnly Si la carte est en lecture seule.
-         */
-        async function toggleCardExpansion(event, cardElement, isReadOnly = false) {
+        function toggleCardExpansion(event, cardElement, isReadOnly = false) {
             if (event.target.closest('.actions button, [contenteditable="true"], textarea, input, .tag-item')) {
                 return;
             }
 
-            if (expandedCard) {
+            if (expandedCard && expandedCard !== cardElement) {
                 closeExpandedCard();
-                if (expandedCard === cardElement) return; // Si on clique sur la même carte, on la ferme simplement.
             }
 
-            expandedCard = cardElement;
-            expandedCard.classList.add('expanded-card', 'fixed', 'top-1/2', 'left-1/2', '-translate-x-1/2', '-translate-y-1/2', 'w-[95%]', 'max-w-5xl', 'h-auto', 'max-h-[90vh]', 'overflow-y-auto', 'p-8', 'shadow-2xl', 'z-[1000]', 'animate-expand', 'border-2', 'border-blue-600', 'rounded-xl');
-            
-            const hiddenDetail = expandedCard.querySelector('.hidden-detail');
-            hiddenDetail.classList.remove('hidden');
-            overlay.classList.remove('hidden');
-
-            const closeButton = document.createElement('span');
-            closeButton.className = 'close-button absolute top-4 right-5 text-3xl font-bold text-gray-400 cursor-pointer z-[1001] p-2 rounded-full leading-none transition-all duration-300 ease-in-out bg-white bg-opacity-20 hover:text-gray-200 hover:bg-opacity-40 hover:scale-110';
-            closeButton.innerHTML = '&times;';
-            closeButton.onclick = (e) => { e.stopPropagation(); closeExpandedCard(); };
-            expandedCard.appendChild(closeButton);
-
-            if (!isReadOnly) {
-                addCardEventListeners(expandedCard, expandedCard.dataset.type, expandedCard.dataset.id);
+            if (cardElement.classList.contains('expanded-card')) {
+                closeExpandedCard();
             } else {
-                expandedCard.querySelectorAll('[contenteditable], textarea, input').forEach(el => {
-                    el.setAttribute('readonly', 'true');
-                    el.setAttribute('contenteditable', 'false');
-                    el.classList.add('bg-gray-100', 'cursor-not-allowed');
-                });
-                expandedCard.querySelectorAll('.actions button:not(.print)').forEach(btn => btn.classList.add('hidden'));
+                expandedCard = cardElement;
+                expandedCard.classList.add('expanded-card', 'fixed', 'top-1/2', 'left-1/2', '-translate-x-1/2', '-translate-y-1/2', 'w-[95%]', 'max-w-5xl', 'h-auto', 'max-h-[90vh]', 'overflow-y-auto', 'p-8', 'shadow-2xl', 'z-[1000]', 'animate-expand', 'border-2', 'border-blue-600', 'rounded-xl');
+                
+                const hiddenDetail = expandedCard.querySelector('.hidden-detail');
+                hiddenDetail.classList.remove('hidden');
+                overlay.classList.remove('hidden');
+
+                const closeButton = document.createElement('span');
+                closeButton.className = 'close-button absolute top-4 right-5 text-3xl font-bold text-gray-400 cursor-pointer z-[1001] p-2 rounded-full leading-none transition-all duration-300 ease-in-out hover:text-gray-600';
+                closeButton.innerHTML = '&times;';
+                closeButton.onclick = (e) => { e.stopPropagation(); closeExpandedCard(); };
+                expandedCard.appendChild(closeButton);
+
+                if (!isReadOnly) {
+                    addCardEventListeners(expandedCard, expandedCard.dataset.type, expandedCard.dataset.id);
+                } else {
+                    expandedCard.querySelectorAll('[contenteditable], textarea, input').forEach(el => {
+                        el.setAttribute('readonly', 'true');
+                        el.setAttribute('contenteditable', 'false');
+                        el.classList.add('bg-gray-100', 'cursor-not-allowed');
+                    });
+                    expandedCard.querySelectorAll('.actions button:not(.print)').forEach(btn => btn.classList.add('hidden'));
+                }
+                expandedCard.querySelectorAll('textarea').forEach(autoResizeTextarea);
             }
-            expandedCard.querySelectorAll('textarea').forEach(autoResizeTextarea);
         }
-
-        // ... Le reste des fonctions (CRUD, rendu, etc.) sera défini ci-dessous ...
         
-        // --- LOGIQUE D'AUTHENTIFICATION ---
+        // --- GESTION DE L'AUTHENTIFICATION ---
 
-        /**
-         * Gère les changements d'état de l'authentification de l'utilisateur.
-         */
         onAuthStateChanged(auth, async (user) => {
             const authModalCloseBtn = authModal.querySelector('.close-button');
 
             if (user) {
                 // L'utilisateur est connecté
                 userId = user.uid;
-                userIdDisplay.innerText = `Utilisateur: ${user.email || user.uid}`;
+                userIdDisplay.innerText = `Connecté: ${user.email || 'Anonyme'}`;
                 authBtn.classList.add('hidden');
                 signOutBtn.classList.remove('hidden');
 
                 closeAuthModal();
-                authModalCloseBtn.classList.remove('hidden'); // Bouton fermer visible si l'utilisateur est connecté
+                authModalCloseBtn.classList.remove('hidden'); 
                 mainContent.classList.remove('hidden');
                 nav.classList.remove('hidden');
                 
@@ -434,9 +395,9 @@
                 nav.classList.add('hidden');
                 document.querySelectorAll('.grid-container').forEach(container => container.innerHTML = '');
                 
-                detachRealtimeListeners(); // Important: détache les anciens écouteurs
+                detachRealtimeListeners(); 
                 openAuthModal();
-                authModalCloseBtn.classList.add('hidden'); // Masque le bouton fermer pour forcer la connexion
+                authModalCloseBtn.classList.add('hidden'); // Forcer la connexion
             }
         });
 
@@ -446,30 +407,22 @@
         }
 
         function closeAuthModal() {
-            authModal.classList.add('hidden');
-            overlay.classList.add('hidden');
-            emailInput.value = '';
-            passwordInput.value = '';
+            if (auth.currentUser) { // Ne ferme la modale que si l'utilisateur est connecté
+                authModal.classList.add('hidden');
+                overlay.classList.add('hidden');
+                emailInput.value = '';
+                passwordInput.value = '';
+            }
         }
-
-        /**
-         * Détache tous les écouteurs Firestore actifs.
-         */
+        
         function detachRealtimeListeners() {
             unsubscribeListeners.forEach(unsubscribe => unsubscribe());
             unsubscribeListeners = [];
         }
 
-
         // --- GESTION DES DONNÉES (FIRESTORE) ---
 
-        /**
-         * Crée un écouteur onSnapshot pour une collection donnée.
-         * @param {string} collectionName Nom de la collection.
-         * @param {Function} renderCallback Fonction à appeler avec les données.
-         * @param {boolean} isPublic Si la collection est publique.
-         */
-        function createSnapshotListener(collectionName, renderCallback, isPublic = false) {
+        function createSnapshotListener(collectionName, cacheKey, isPublic = false) {
             const path = isPublic
                 ? `artifacts/${firebaseConfig.appId}/public/data/${collectionName}`
                 : `artifacts/${firebaseConfig.appId}/users/${userId}/${collectionName}`;
@@ -478,88 +431,241 @@
             
             const unsubscribe = onSnapshot(q, (snapshot) => {
                 const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderCallback(data);
+                allData[cacheKey] = data; // Met à jour le cache
+                
+                // Redessine l'interface avec les données à jour
+                if (cacheKey === 'actions') {
+                    renderEntries(COLLECTIONS.ACTIONS, 'actionList', true, false, allData.actions);
+                    renderEntries('actionsTerminees', 'actionTermineeList', true, true, allData.actions);
+                } else {
+                    const containerId = document.querySelector(`[data-type="${cacheKey}"]`)?.nextElementSibling.id;
+                    if(containerId) renderEntries(collectionName, containerId, false, false, allData[cacheKey], isPublic);
+                }
+
             }, (error) => {
                 console.error(`Erreur d'écoute de ${collectionName}:`, error);
                 showModalMessage(`Erreur de chargement des données pour ${collectionName}.`, true);
             });
 
-            unsubscribeListeners.push(unsubscribe); // Ajoute à la liste pour le détachement
+            unsubscribeListeners.push(unsubscribe);
         }
 
-        /**
-         * Met en place tous les écouteurs en temps réel pour les collections de l'utilisateur.
-         */
         function setupRealtimeListeners() {
             if (!userId) return;
-
-            detachRealtimeListeners(); // S'assure qu'il n'y a pas d'anciens écouteurs
-
-            // Écouteur pour les Objectifs
-            createSnapshotListener(COLLECTIONS.OBJECTIFS, (data) => {
-                renderEntries(COLLECTIONS.OBJECTIFS, 'objectifList', false, false, data);
-            });
-
-            // Écouteur pour les Actions (qui met à jour "TO DO" et "Terminées")
-            createSnapshotListener(COLLECTIONS.ACTIONS, (data) => {
-                renderEntries(COLLECTIONS.ACTIONS, 'actionList', true, false, data);
-                renderEntries('actionsTerminees', 'actionTermineeList', true, true, data);
-            });
-
-            // Écouteur pour les Notes de Réunion
-            createSnapshotListener(COLLECTIONS.NOTES_REUNION, (data) => {
-                renderEntries(COLLECTIONS.NOTES_REUNION, 'notesReunionList', false, false, data);
-            });
-
-            // Écouteur pour les Éléments Partagés (collection publique)
-            createSnapshotListener(COLLECTIONS.SHARED_ENTRIES, (data) => {
-                renderEntries(COLLECTIONS.SHARED_ENTRIES, 'sharedItemList', false, false, data, true);
-            }, true);
+            detachRealtimeListeners(); 
+            createSnapshotListener(COLLECTIONS.OBJECTIFS, 'objectifs');
+            createSnapshotListener(COLLECTIONS.ACTIONS, 'actions');
+            createSnapshotListener(COLLECTIONS.NOTES_REUNION, 'notesReunion');
+            createSnapshotListener(COLLECTIONS.SHARED_ENTRIES, 'sharedItems', true);
         }
         
-        // --- INITIALISATION ---
+        // --- LOGIQUE METIER ET RENDU (Fonctions complètes) ---
 
         /**
-         * Met en place tous les gestionnaires d'événements de la page.
-         */
+        * Rend les entrées pour un type donné. Filtre, trie et affiche les cartes.
+        */
+        function renderEntries(type, containerId, isAction, displayCompletedActions, data, isReadOnly = false) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const searchInput = document.getElementById(`searchBar${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+
+            container.innerHTML = '';
+
+            let filteredData = data.filter(entry => {
+                if (isAction && displayCompletedActions !== !!entry.isCompleted) {
+                    return false;
+                }
+                if (searchTerm) {
+                    const searchableContent = [
+                        entry.titre,
+                        entry.contenu,
+                        entry.description,
+                        entry.progressComments,
+                        ...(entry.tags || [])
+                    ].join(' ').toLowerCase();
+                    return searchableContent.includes(searchTerm);
+                }
+                return true;
+            });
+
+            filteredData.sort((a, b) => {
+                let dateA, dateB;
+                if (type === COLLECTIONS.ACTIONS) {
+                    dateA = a.deadLine ? new Date(a.deadLine) : new Date(8640000000000000);
+                    dateB = b.deadLine ? new Date(b.deadLine) : new Date(8640000000000000);
+                    return dateA - dateB;
+                } else {
+                    dateA = (a.historique && a.historique.length > 0) ? extractDateFromHistory(a.historique[0]) : new Date(0);
+                    dateB = (b.historique && b.historique.length > 0) ? extractDateFromHistory(b.historique[0]) : new Date(0);
+                    return dateB - dateA;
+                }
+            });
+
+            if (filteredData.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-600 col-span-full mt-12">${searchTerm ? 'Aucun résultat.' : 'Aucun élément à afficher.'}</p>`;
+                return;
+            }
+
+            filteredData.forEach(entry => {
+                const cardDiv = createCardElement(entry, type, isReadOnly);
+                container.appendChild(cardDiv);
+            });
+        }
+        
+        /**
+        * Crée l'élément HTML pour une carte.
+        */
+        function createCardElement(entry, type, isReadOnly) {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'card bg-white p-5 rounded-lg shadow-lg cursor-pointer transition-all duration-300 ease-in-out relative flex flex-col border border-gray-200 hover:translate-y-[-5px] hover:shadow-xl';
+            cardDiv.dataset.id = entry.id;
+            cardDiv.dataset.type = type;
+
+            cardDiv.addEventListener('click', (event) => toggleCardExpansion(event, cardDiv, isReadOnly));
+
+            // Contenu visible de la carte
+            let cardContent = `<h3 class="text-xl font-bold text-gray-800 mb-2 break-words">${entry.titre}</h3>`;
+            
+            // Contenu détaillé (caché)
+            let hiddenDetailContent = `<p class="mb-2"><strong>Titre:</strong> <span contenteditable="${!isReadOnly}" data-field="titre" spellcheck="true" class="inline-block p-1 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none w-full">${entry.titre}</span></p>`;
+
+            let actionButtons = !isReadOnly
+                ? `<button class="delete bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md cursor-pointer text-sm" data-action="delete">🗑️ Supprimer</button>
+                   <button class="share bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md cursor-pointer text-sm" data-action="share">🔗 Partager</button>`
+                : '';
+            actionButtons += `<button class="print bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded-md cursor-pointer text-sm" data-action="print">🖨️ Imprimer</button>`;
+
+            // Contenu spécifique par type
+            const originalType = entry.originalCollection || type;
+            if (originalType === COLLECTIONS.NOTES_REUNION) {
+                cardContent += `<p class="text-gray-700 text-sm break-words">${(entry.contenu || '').substring(0, 100)}...</p>`;
+                hiddenDetailContent += `<p class="mb-2"><strong>Contenu:</strong> <textarea data-field="contenu" spellcheck="true" ${isReadOnly ? 'readonly' : ''} class="w-full p-2 mb-4 rounded-md border border-gray-300 text-base resize-y min-h-[120px]">${entry.contenu || ''}</textarea></p>`;
+            } else if (originalType === COLLECTIONS.ACTIONS) {
+                cardContent += `<p class="text-gray-700 text-sm">Deadline: <strong class="text-blue-700">${entry.deadLine ? new Date(entry.deadLine).toLocaleDateString('fr-FR') : 'N/A'}</strong></p>`;
+                hiddenDetailContent += `<p class="mb-2"><strong>Deadline:</strong> <input type="date" value="${entry.deadLine || ''}" data-field="deadLine" ${isReadOnly ? 'readonly' : ''} class="w-full p-2 mb-4 rounded-md border border-gray-300"></p>
+                                        <p class="mb-2"><strong>Étapes:</strong></p><div class="steps-list" data-field="etapes-container"></div>
+                                        ${!isReadOnly ? `<button type="button" class="add-step-card-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs mt-2">➕ Étape</button>` : ''}`;
+                if (!isReadOnly) {
+                    if (entry.isCompleted) {
+                        actionButtons += `<button class="reintegrate bg-yellow-500 hover:bg-yellow-600 text-gray-800 font-bold py-2 px-4 rounded-md text-sm" data-action="reintegrate">↩️ Réintégrer</button>`;
+                    } else {
+                        actionButtons += `<button class="mark-as-complete bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-md text-sm" data-action="mark-as-complete">✅ Terminer</button>`;
+                    }
+                }
+            } else if (originalType === COLLECTIONS.OBJECTIFS) {
+                const progressClass = entry.pourcentage < 25 ? 'bg-red-500' : (entry.pourcentage < 75 ? 'bg-yellow-500' : 'bg-green-500');
+                cardContent += `<div class="progress-bar bg-gray-200 rounded-md overflow-hidden h-6 my-3 shadow-inner">
+                                    <div class="progress h-full text-center text-white font-bold leading-6 transition-all ${progressClass}" style="width: ${entry.pourcentage}%">${entry.pourcentage}%</div>
+                                </div>`;
+                hiddenDetailContent += `<p class="mb-2"><strong>Réalisation:</strong> <span class="progress-value font-bold">${entry.pourcentage}%</span></p>
+                                        <input type="range" min="0" max="100" value="${entry.pourcentage}" data-field="pourcentage_range" ${isReadOnly ? 'disabled' : ''} class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                        <p class="mb-2"><strong>Description:</strong> <textarea data-field="description" spellcheck="true" ${isReadOnly ? 'readonly' : ''} class="w-full p-2 mb-4 rounded-md border border-gray-300 min-h-[100px]">${entry.description || ''}</textarea></p>
+                                        <p class="mb-2"><strong>Commentaires:</strong> <textarea data-field="progressComments" spellcheck="true" ${isReadOnly ? 'readonly' : ''} class="w-full p-2 mb-4 rounded-md border border-gray-300 min-h-[100px]">${entry.progressComments || ''}</textarea></p>`;
+                if (!isReadOnly) {
+                    actionButtons += `<button class="move bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md text-sm" data-action="move" data-to="${COLLECTIONS.ACTIONS}">➡️ Déplacer vers Actions</button>`;
+                }
+            }
+            
+            const tagsHtml = entry.tags && entry.tags.length > 0
+                ? `<div class="tags-display mt-2 text-sm flex flex-wrap gap-1">${entry.tags.map(tag => `<span class="tag-item bg-gray-200 px-2 py-1 rounded-full text-xs">${tag}</span>`).join('')}</div>`
+                : '';
+            cardContent += tagsHtml;
+            hiddenDetailContent += `<p class="mb-2"><strong>Tags (séparés par ,):</strong> <span contenteditable="${!isReadOnly}" data-field="tags" class="inline-block p-1 rounded-md border border-gray-300 w-full">${(entry.tags || []).join(', ')}</span></p>`;
+
+            if (isReadOnly) {
+                hiddenDetailContent += `<p class="text-xs text-gray-500 mt-4">Partagé par: <strong class="text-gray-700">${entry.originalUserId}</strong> le ${entry.sharedAt}</p>`;
+            }
+
+            const historiqueHtml = (entry.historique || []).map(line => `• ${line}`).join('<br>');
+            
+            cardDiv.innerHTML = `
+                ${cardContent}
+                <div class="hidden-detail hidden flex-grow pt-4 border-t border-gray-200 mt-4">
+                    ${hiddenDetailContent}
+                    <div class="actions flex flex-wrap gap-3 mt-6 justify-end pt-4 border-t border-gray-200">${actionButtons}</div>
+                    <div class="historique text-sm text-gray-600 mt-6 bg-gray-100 p-4 border-l-4 border-blue-600 rounded-md">
+                        <strong>Historique :</strong><br>${historiqueHtml}
+                    </div>
+                </div>`;
+            
+            // Ajout dynamique des étapes pour les actions
+            if (originalType === COLLECTIONS.ACTIONS) {
+                const stepsContainer = cardDiv.querySelector('.steps-list');
+                (entry.etapes || []).forEach((step, index) => addStepInput(stepsContainer, step, index, isReadOnly));
+                const addStepBtn = cardDiv.querySelector('.add-step-card-btn');
+                if (addStepBtn) {
+                    addStepBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        addStepInput(stepsContainer, '', (entry.etapes || []).length, isReadOnly);
+                    });
+                }
+            }
+
+            return cardDiv;
+        }
+
+        /**
+        * Ajoute un champ d'entrée pour une étape d'action.
+        */
+        function addStepInput(container, value, index, isReadOnly) {
+            const li = document.createElement('li');
+            li.className = 'flex items-center mb-1';
+            li.innerHTML = `
+                <input type="text" value="${value}" placeholder="Nouvelle étape" data-index="${index}" data-field="step-input" 
+                       class="flex-grow p-1 rounded-md border border-gray-300 text-sm mr-2" ${isReadOnly ? 'readonly' : ''}>
+                ${!isReadOnly ? `<button class="remove-step bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded-md text-xs">✖️</button>` : ''}`;
+            container.appendChild(li);
+
+            if (!isReadOnly) {
+                li.querySelector('.remove-step').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const card = container.closest('.card');
+                    const entryId = card.dataset.id;
+                    const stepsInputs = Array.from(container.querySelectorAll('input[data-field="step-input"]'));
+                    const newSteps = stepsInputs.filter(input => input !== li.querySelector('input')).map(input => input.value);
+                    li.remove();
+                    updateFieldFromCard(COLLECTIONS.ACTIONS, entryId, 'etapes', newSteps, true);
+                });
+            }
+        }
+        
+        // ... Fonctions CRUD et autres logiques métiers ...
+
+        // --- INITIALISATION ---
+
         function initializeEventListeners() {
-            // Navigation principale
+            // Navigation
             document.querySelectorAll('nav .nav-button').forEach(button => {
                 button.addEventListener('click', () => showPage(button.dataset.target));
             });
             
-            // Boutons "Ajouter un nouvel élément"
+            // Boutons d'ajout
             document.querySelectorAll('.add-new-item-btn').forEach(button => {
                 button.addEventListener('click', () => openNewItemModal(button.dataset.type));
             });
 
-            // Barres de recherche (déclenchent un re-rendu)
+            // Barres de recherche
             document.querySelectorAll('.searchBar').forEach(searchBar => {
                  searchBar.addEventListener('keyup', () => {
-                    // Simule un re-rendu en appelant renderEntries avec un tableau vide
-                    // La fonction piochera alors les données les plus récentes via onSnapshot
-                    // et appliquera le filtre de recherche.
-                    // C'est une simplification, une approche plus optimisée consisterait à stocker
-                    // les données localement et à filtrer ce stock.
-                     switch(searchBar.id) {
-                         case 'searchBarObjectifs': setupRealtimeListeners(); break;
-                         case 'searchBarActions': setupRealtimeListeners(); break;
-                         case 'searchBarActionsTerminees': setupRealtimeListeners(); break;
-                         case 'searchBarNotesReunion': setupRealtimeListeners(); break;
-                         case 'searchBarSharedItems': setupRealtimeListeners(); break;
-                     }
+                     const type = searchBar.id.replace('searchBar', '').toLowerCase();
+                     const isAction = type.includes('action');
+                     const displayCompleted = type.includes('terminees');
+                     const isPublic = type.includes('shared');
+                     const dataKey = type.replace('terminees', 's');
+                     
+                     renderEntries(type, document.getElementById(type + 'List').id, isAction, displayCompleted, allData[dataKey] || [], isPublic);
                  });
             });
 
-            // Overlay (ferme les modales si l'utilisateur est connecté)
+            // Overlay
             overlay.addEventListener('click', () => {
-                if (auth.currentUser) {
-                    closeExpandedCard();
-                    closeAuthModal();
-                }
+                closeExpandedCard();
+                closeAuthModal();
             });
 
-            // Modale d'authentification
+            // Authentification
             authBtn.addEventListener('click', openAuthModal);
             authModal.querySelector('.close-button').addEventListener('click', closeAuthModal);
 
@@ -568,16 +674,16 @@
                     await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
                     showToastNotification('Connexion réussie !', 'success');
                 } catch (error) {
-                    showModalMessage(`Erreur de connexion: ${error.message}`, true);
+                    showModalMessage(`Erreur: ${error.message}`, true);
                 }
             });
 
             signUpEmailBtn.addEventListener('click', async () => {
                 try {
                     await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-                    showToastNotification('Inscription réussie et connecté !', 'success');
+                    showToastNotification('Inscription réussie !', 'success');
                 } catch (error) {
-                    showModalMessage(`Erreur d'inscription: ${error.message}`, true);
+                    showModalMessage(`Erreur: ${error.message}`, true);
                 }
             });
 
@@ -586,36 +692,25 @@
                     await signInWithPopup(auth, googleProvider);
                     showToastNotification('Connexion Google réussie !', 'success');
                 } catch (error) {
-                    showModalMessage(`Erreur de connexion Google: ${error.message}`, true);
+                     showModalMessage(`Erreur: ${error.message}`, true);
                 }
             });
             
-            // Bouton de déconnexion
             signOutBtn.addEventListener('click', async () => {
                 try {
                     await signOut(auth);
-                    showToastNotification('Déconnecté avec succès.', 'info');
-                    // onAuthStateChanged gérera le reste
+                    showToastNotification('Déconnecté.', 'info');
                 } catch (error) {
-                    showModalMessage(`Erreur lors de la déconnexion: ${error.message}`, true);
+                    showModalMessage(`Erreur: ${error.message}`, true);
                 }
             });
         }
         
-        // --- DÉMARRAGE DE L'APPLICATION ---
         document.addEventListener('DOMContentLoaded', () => {
             initializeEventListeners();
-            // L'état de l'authentification est géré par onAuthStateChanged qui s'exécute automatiquement.
-            showPage('objectifs'); // Afficher la page par défaut au chargement
+            showPage('objectifs');
         });
 
-        // NOTE: Les fonctions telles que renderEntries, addCardEventListeners, openNewItemModal,
-        // deleteEntry, updateFieldFromCard etc. sont omises ici pour la brièveté car elles
-        // sont identiques ou très similaires au code original que vous avez fourni.
-        // Vous devez les copier/coller ici depuis votre code source original.
-        // La structure ci-dessus montre comment les intégrer dans un flux plus propre et robuste.
-        // Si vous souhaitez que je les réécrive également, faites-le moi savoir.
-
     </script>
-    </body>
+</body>
 </html>

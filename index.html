@@ -427,65 +427,43 @@
         }
     }
 
-function toggleCardExpansion(event, cardElement, isReadOnly = false) {
-    // Empêche l'expansion si on clique sur un bouton ou un champ éditable
-    if (event.target.closest('.actions button, [contenteditable="true"], textarea, input, .tag-item, .add-step-card-btn, .remove-step')) {
-        return; [cite: 92]
-    }
-
-    // Ferme une autre carte déjà ouverte
-    if (expandedCard && expandedCard !== cardElement) {
-        closeExpandedCard(); [cite: 93]
-    }
-
-    // Si la carte cliquée est déjà ouverte, on la ferme
-    if (cardElement.classList.contains('expanded-card')) {
-        closeExpandedCard(); [cite: 94]
-    } else {
-        // Sinon, on l'agrandit
-        expandedCard = cardElement;
-
-        // On se contente d'ajouter un seul bloc de classes pour un style cohérent
-        expandedCard.classList.add(
-            'expanded-card',
-            'fixed', 'top-1/2', 'left-1/2',
-            '-translate-x-1/2', '-translate-y-1/2',
-            'w-[95%]', 'max-w-screen-xl', // Classes pour la taille et le centrage
-            'h-auto', 'max-h-[90vh]', 'overflow-y-auto',
-            'p-8', 'shadow-2xl', 'z-[1000]',
-            'animate-expand', 'border-2', 'border-blue-600', 'rounded-xl'
-        );
-
-        // Affiche les détails cachés de la carte et l'overlay
-        const hiddenDetail = expandedCard.querySelector('.hidden-detail');
-        hiddenDetail.classList.remove('hidden'); [cite: 102]
-        overlay.classList.remove('hidden'); [cite: 102]
-
-        // Crée et ajoute le bouton pour fermer la carte
-        const closeButton = document.createElement('span');
-        closeButton.className = 'close-button absolute top-4 right-5 text-3xl font-bold text-gray-400 cursor-pointer z-[1001] p-2 rounded-full leading-none transition-all duration-300 ease-in-out hover:text-gray-600'; [cite: 103]
-        closeButton.innerHTML = '&times;'; [cite: 104]
-        closeButton.onclick = (e) => { e.stopPropagation(); closeExpandedCard(); }; [cite: 104]
-        expandedCard.appendChild(closeButton);
-
-        // Ajoute les écouteurs d'événements si la carte n'est pas en lecture seule
-        if (!isReadOnly) {
-            addCardEventListeners(expandedCard, expandedCard.dataset.type, expandedCard.dataset.id); [cite: 105]
-        } else {
-            // Désactive les champs pour les cartes en lecture seule
-            expandedCard.querySelectorAll('[contenteditable], textarea, input[type="date"], input[type="range"]').forEach(el => {
-                el.setAttribute('readonly', 'true');
-                el.setAttribute('disabled', 'true');
-                el.setAttribute('contenteditable', 'false');
-                el.classList.add('bg-gray-100', 'cursor-not-allowed');
-            }); [cite: 106]
-            expandedCard.querySelectorAll('.actions button:not(.print)').forEach(btn => btn.classList.add('hidden')); [cite: 107]
+    function toggleCardExpansion(event, cardElement, isReadOnly = false) {
+        if (event.target.closest('.actions button, [contenteditable="true"], textarea, input, .tag-item, .add-step-card-btn, .remove-step')) {
+            return;
         }
 
-        // Redimensionne les zones de texte
-        expandedCard.querySelectorAll('textarea').forEach(autoResizeTextarea); [cite: 107]
+        if (expandedCard && expandedCard !== cardElement) closeExpandedCard();
+
+        if (cardElement.classList.contains('expanded-card')) {
+            closeExpandedCard();
+        } else {
+            expandedCard = cardElement;
+            expandedCard.classList.add('expanded-card', 'fixed', 'top-1/2', 'left-1/2', '-translate-x-1/2', '-translate-y-1/2', 'w-[95%]', 'max-w-5xl', 'h-auto', 'max-h-[90vh]', 'overflow-y-auto', 'p-8', 'shadow-2xl', 'z-[1000]', 'animate-expand', 'border-2', 'border-blue-600', 'rounded-xl');
+            
+            const hiddenDetail = expandedCard.querySelector('.hidden-detail');
+            hiddenDetail.classList.remove('hidden');
+            overlay.classList.remove('hidden');
+
+            const closeButton = document.createElement('span');
+            closeButton.className = 'close-button absolute top-4 right-5 text-3xl font-bold text-gray-400 cursor-pointer z-[1001] p-2 rounded-full leading-none transition-all duration-300 ease-in-out hover:text-gray-600';
+            closeButton.innerHTML = '&times;';
+            closeButton.onclick = (e) => { e.stopPropagation(); closeExpandedCard(); };
+            expandedCard.appendChild(closeButton);
+
+            if (!isReadOnly) {
+                addCardEventListeners(expandedCard, expandedCard.dataset.type, expandedCard.dataset.id);
+            } else {
+                expandedCard.querySelectorAll('[contenteditable], textarea, input[type="date"], input[type="range"]').forEach(el => {
+                    el.setAttribute('readonly', 'true');
+                    el.setAttribute('disabled', 'true');
+                    el.setAttribute('contenteditable', 'false');
+                    el.classList.add('bg-gray-100', 'cursor-not-allowed');
+                });
+                expandedCard.querySelectorAll('.actions button:not(.print)').forEach(btn => btn.classList.add('hidden'));
+            }
+            expandedCard.querySelectorAll('textarea').forEach(autoResizeTextarea);
+        }
     }
-}
 
     function renderEntries(type, containerId, data, options = {}) {
         const { isAction = false, displayCompleted = false, isReadOnly = false, searchTerm = '' } = options;

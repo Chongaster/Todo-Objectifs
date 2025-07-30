@@ -439,12 +439,13 @@ function toggleCardExpansion(event, cardElement, isReadOnly = false) {
     } else {
         expandedCard = cardElement;
 
-        // 🔧 Réinitialise les styles potentiellement corrompus
-        expandedCard.style.width = '';
-        expandedCard.style.left = '';
-        expandedCard.style.top = '';
-        expandedCard.style.position = '';
-        expandedCard.classList.remove('expanded-card');
+expandedCard = cardElement;
+
+    // 🔧 Forcer la largeur pour corriger le bug de cartes existantes
+    expandedCard.style.width = '95vw';
+    expandedCard.style.maxWidth = '1280px'; // ou 'none' pour largeur totale
+    expandedCard.style.minWidth = 'min(95vw, 1280px)';
+
 
         // 🧩 Applique de nouveau les bonnes classes d’expansion
         expandedCard.classList.add(

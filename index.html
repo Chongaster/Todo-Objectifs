@@ -3,180 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <title>Klaro</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Styles pour les animations, le rendu et l'impression */
-        @keyframes expandAnimation {
-            from { transform: translate(-50%, -50%) scale(0.95); opacity: 0.9; }
-            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <script>
+        // Configuration de Tailwind pour le mode sombre basé sur une classe
+        tailwind.config = {
+            darkMode: 'class',
         }
-        .animate-expand { animation: expandAnimation 0.3s forwards; }
+    </script>
+    <style>
+        /* Appliquer une police plus moderne et lisible */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
 
+        /* Améliorations de l'UI et animations */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        .animate-fadein { animation: fadeIn 0.3s forwards; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
 
+        @keyframes slideInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-in-up { animation: slideInUp 0.4s ease-out forwards; }
+
+        /* Styles pour le toast de notification */
         @keyframes fadeinout {
-            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
-            10% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            90% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            0% { opacity: 0; transform: translateY(20px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
         }
-        .animate-fadeinout { animation: fadeinout 4s forwards; }
+        .animate-toast { animation: fadeinout 4s forwards; }
 
-        /* Styles pour les champs et les états spécifiques */
-        .nav-button { @apply bg-transparent text-white border-none px-4 py-2 cursor-pointer flex-grow text-lg transition-colors duration-200 flex items-center justify-center; }
-        .nav-button:hover { @apply bg-gray-600; }
-        .nav-button.active { @apply bg-blue-600 font-bold shadow-inner; }
-        
-        .mode-selector button { @apply px-6 py-2 text-lg font-bold rounded-lg transition-all duration-200; }
-        .mode-selector button.active { @apply bg-white text-blue-700 shadow-lg; }
-        .mode-selector button:not(.active) { @apply bg-blue-500 text-white; }
-
-        .deadline-overdue { @apply text-red-500 font-semibold; }
-        
-        .editable-field {
-            @apply block w-full p-2 mb-4 border border-gray-300 rounded-md bg-gray-50 transition-all duration-200;
-        }
-        .editable-field:focus {
-            @apply bg-white border-blue-600 ring-2 ring-blue-300 outline-none;
-        }
-        textarea.editable-field { @apply min-h-[100px]; }
-
-        .course-item input:checked + span {
-            @apply line-through text-gray-400;
-        }
-
-        /* Styles d'impression */
-        @media print {
-            body * { visibility: hidden; }
-            .expanded-card, .expanded-card * { visibility: visible; }
-            .expanded-card {
-                position: static !important; transform: none !important;
-                left: auto !important; top: auto !important; margin: 0 auto !important; 
-                width: 100% !important; max-width: none !important; height: auto !important;
-                max-height: none !important; overflow: visible !important; box-shadow: none !important; 
-                border: none !important; padding: 1rem !important; background: white !important; color: black !important;
-            }
-            .expanded-card .close-button, .expanded-card .actions,
-            .expanded-card .add-new-item-btn, .expanded-card .add-step-card-btn,
-            .expanded-card [data-action="print"] { display: none !important; }
-            .card h3, .historique strong { color: black !important; }
-            .historique { border-left: 1px solid #ccc !important; background: #f9f9f9 !important; }
-            input, textarea, [contenteditable="true"] {
-                border: none !important; background: transparent !important;
-                padding: 0 !important; margin: 0 !important; box-shadow: none !important; 
-                -webkit-print-color-adjust: exact; color-adjust: exact;
-            }
-        }
     </style>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800 leading-relaxed min-h-screen flex flex-col">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
 
-    <header class="bg-gradient-to-r from-gray-800 to-blue-800 text-white p-4 text-center shadow-lg fixed top-0 w-full z-50 box-border flex flex-col rounded-b-lg">
-        <div class="w-full flex items-center justify-between h-20">
-            <div class="w-1/3"></div>
-            <h1 class="w-1/3 text-center m-0 text-2xl md:text-3xl font-extrabold">Klaro</h1>
-            <div class="w-1/3 flex flex-col items-end gap-1 mr-4">
-                <span id="userIdDisplay" class="text-sm text-gray-300">Non connecté</span>
-                <button id="authBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded-md text-xs transition-all duration-300 ease-in-out shadow-sm">Connexion</button>
-                <button id="signOutBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-md text-xs transition-all duration-300 ease-in-out shadow-sm hidden">Déconnexion</button>
-            </div>
-        </div>
-        <div id="modeSelector" class="mode-selector flex justify-center gap-4 py-3 hidden">
-            <button data-mode="pro" class="active">🏢 Pro</button>
-            <button data-mode="perso">🏠 Perso</button>
-        </div>
-    </header>
+    <!-- Conteneur principal de l'application -->
+    <div id="app-container" class="flex flex-col h-screen">
 
-    <nav id="nav-pro" class="flex flex-wrap justify-center bg-gray-700 shadow-md fixed top-[148px] w-full z-40 box-border h-auto md:h-12 rounded-b-md hidden">
-        <button class="nav-button" data-target="objectifs"><span class="mr-2">🎯</span>Objectifs</button>
-        <button class="nav-button" data-target="actions"><span class="mr-2">📝</span>TO DO</button>
-        <button class="nav-button" data-target="actionsTerminees"><span class="mr-2">✅</span>Terminées</button>
-        <button class="nav-button" data-target="notesReunion"><span class="mr-2">📋</span>Notes</button>
-        <button class="nav-button" data-target="sharedItems"><span class="mr-2">🌐</span>Partagés</button>
-    </nav>
-    
-    <nav id="nav-perso" class="flex flex-wrap justify-center bg-teal-800 shadow-md fixed top-[148px] w-full z-40 box-border h-auto md:h-12 rounded-b-md hidden">
-        <button class="nav-button" data-target="todo_perso"><span class="mr-2">📌</span>TODO</button>
-        <button class="nav-button" data-target="voyages"><span class="mr-2">✈️</span>Voyages</button>
-        <button class="nav-button" data-target="notes_perso"><span class="mr-2">🗒️</span>Notes</button>
-        <button class="nav-button" data-target="courses"><span class="mr-2">🛒</span>Courses</button>
-    </nav>
-    
-    <main class="flex-grow pt-52 md:pt-56 pb-8 hidden">
-        <div id="objectifs" class="content hidden"></div>
-        <div id="actions" class="content hidden"></div>
-        <div id="actionsTerminees" class="content hidden"></div>
-        <div id="notesReunion" class="content hidden"></div>
-        <div id="sharedItems" class="content hidden"></div>
-        <div id="todo_perso" class="content hidden"></div>
-        <div id="voyages" class="content hidden"></div>
-        <div id="notes_perso" class="content hidden"></div>
-        <div id="courses" class="content hidden"></div>
-    </main>
-    
-    <template id="page-template">
-        <div class="p-4 md:p-8 max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                <div>
-                    <h2 class="page-title text-3xl font-bold text-gray-800"></h2>
-                    <p class="page-description text-gray-600 mt-1"></p>
+        <!-- En-tête fixe -->
+        <header class="bg-gray-800 dark:bg-gray-950 text-white shadow-md z-20">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <h1 class="text-2xl md:text-3xl font-extrabold">Klaro</h1>
+                <div class="flex items-center gap-3">
+                    <span id="userIdDisplay" class="text-sm text-gray-300 hidden md:block">Non connecté</span>
+                    <button id="authBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Connexion</button>
+                    <button id="preferencesBtn" class="hidden p-2 rounded-full hover:bg-white/20 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    </button>
+                    <button id="signOutBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors hidden">Déconnexion</button>
                 </div>
-                <button class="add-new-item-btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg cursor-pointer text-lg block w-full md:w-auto whitespace-nowrap shadow-md transition-transform hover:scale-105">➕ Ajouter</button>
             </div>
-             <input type="text" class="searchBar w-full p-3 mb-6 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Rechercher...">
-            <div class="grid-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-4"></div>
-        </div>
-    </template>
-    
-    <template id="card-template-base">
-        <div class="card bg-white p-5 rounded-xl shadow-lg cursor-pointer transition-all duration-300 ease-in-out relative flex flex-col border border-gray-200 hover:-translate-y-1.5 hover:shadow-2xl">
-            <span class="card-icon absolute top-3 right-4 text-2xl opacity-40"></span>
-            <div class="card-content flex-grow flex flex-col">
-                <h3 class="card-title text-xl font-bold text-gray-800 mb-2 break-words pr-6"></h3>
-                <div class="card-summary text-gray-600 text-sm flex-grow"></div>
-                <div class="tags-display mt-auto pt-3 text-sm flex flex-wrap gap-1"></div>
+            <div id="modeSelector" class="bg-gray-700 dark:bg-gray-800 flex justify-center gap-2 p-2 hidden">
+                <button data-mode="pro" class="px-5 py-2 text-base font-bold rounded-lg transition-all duration-200">🏢 Pro</button>
+                <button data-mode="perso" class="px-5 py-2 text-base font-bold rounded-lg transition-all duration-200">🏠 Perso</button>
             </div>
-            <div class="hidden-detail hidden flex-grow pt-4 border-t border-gray-200 mt-4"></div>
-        </div>
-    </template>
-    
-    <div class="overlay hidden fixed inset-0 w-full h-full bg-black bg-opacity-60 z-[1000] backdrop-blur-sm animate-fadein" id="overlay"></div>
+            <nav id="main-nav" class="bg-white/10 flex flex-wrap justify-center p-1 hidden">
+                <!-- Les boutons de navigation seront insérés ici par JS -->
+            </nav>
+        </header>
 
-    <div id="authModal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg shadow-2xl z-[2000] max-w-md w-11/12 hidden animate-expand">
-        <span class="close-button absolute top-4 right-5 text-3xl font-bold text-gray-400 cursor-pointer">&times;</span>
-        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Connexion / Inscription</h3>
-        <div class="mb-4">
-            <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
-            <input type="email" id="email" class="shadow appearance-none border rounded w-full py-2 px-3" placeholder="votre@email.com" autocomplete="email">
-        </div>
-        <div class="mb-6">
-            <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Mot de passe:</label>
-            <input type="password" id="password" class="shadow appearance-none border rounded w-full py-2 px-3" placeholder="********" autocomplete="current-password">
-        </div>
-        <div class="flex flex-col gap-3">
-            <button id="signInEmailBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Se connecter</button>
-            <button id="signUpEmailBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">S'inscrire</button>
-            <div class="relative flex py-5 items-center">
-                <div class="flex-grow border-t border-gray-300"></div><span class="flex-shrink mx-4 text-gray-400">OU</span><div class="flex-grow border-t border-gray-300"></div>
+        <!-- Contenu principal scrollable -->
+        <main class="flex-grow overflow-y-auto p-4 md:p-6">
+            <div id="page-content" class="container mx-auto">
+                <!-- Le contenu de la page sera injecté ici -->
             </div>
-            <button id="signInGoogleBtn" class="bg-white hover:bg-gray-100 text-gray-800 font-bold py-2 px-4 rounded shadow-md flex items-center justify-center gap-2 border">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google icon" class="w-5 h-5"> Se connecter avec Google
-            </button>
+        </main>
+    </div>
+
+    <!-- Modale (conteneur universel) -->
+    <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-60 z-40 flex items-center justify-center p-4 hidden animate-fade-in">
+        <div id="modal-container" class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-h-[90vh] flex flex-col animate-slide-in-up">
+            <!-- Le contenu de la modale sera injecté ici -->
         </div>
     </div>
-    
+
+    <!-- Template pour une page -->
+    <template id="page-template">
+        <div class="animate-fade-in">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <div>
+                    <h2 class="page-title text-3xl font-bold text-gray-900 dark:text-gray-100"></h2>
+                    <p class="page-description text-gray-600 dark:text-gray-400 mt-1"></p>
+                </div>
+                <button class="add-new-item-btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg cursor-pointer text-lg w-full md:w-auto whitespace-nowrap shadow-md transition-transform hover:scale-105">➕ Ajouter</button>
+            </div>
+            <input type="text" class="searchBar w-full p-3 mb-6 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200" placeholder="Rechercher...">
+            <div class="grid-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+        </div>
+    </template>
+
+    <!-- Template pour une carte -->
+    <template id="card-template">
+        <div class="card bg-white dark:bg-gray-800 p-5 rounded-xl shadow-lg cursor-pointer transition-all duration-300 relative flex flex-col border border-gray-200 dark:border-gray-700 hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-blue-500/20">
+            <span class="card-icon absolute top-4 right-4 text-2xl opacity-40"></span>
+            <div class="flex-grow flex flex-col">
+                <h3 class="card-title text-xl font-bold text-gray-800 dark:text-gray-100 mb-2 break-words pr-8"></h3>
+                <div class="card-summary text-gray-600 dark:text-gray-400 text-sm flex-grow"></div>
+                <div class="tags-display mt-auto pt-3 text-sm flex flex-wrap gap-2"></div>
+            </div>
+        </div>
+    </template>
+
 <script type="module">
     // Importe les modules Firebase nécessaires.
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getAuth, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-    import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, addDoc, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInAnonymously, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, addDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // --- CONFIGURATION & CONSTANTES ---
     const firebaseConfig = {
@@ -188,62 +128,67 @@
         appId: "1:621525076182:web:f5a9bc1f5aaae71ce7e177",
         measurementId: "G-15HMDGYYCN"
     };
+    const appId = firebaseConfig.appId;
 
-    const COLLECTIONS_PRO = {
+    const COLLECTIONS = {
         OBJECTIFS: 'objectifs',
         ACTIONS: 'actions',
         NOTES_REUNION: 'notesReunion',
-        SHARED_ENTRIES: 'shared_entries'
-    };
-
-    const COLLECTIONS_PERSO = {
+        SHARED_ENTRIES: 'shared_entries',
         TODO: 'todo_perso',
         VOYAGES: 'voyages',
-        NOTES: 'notes_perso',
-        COURSES: 'courses'
+        NOTES_PERSO: 'notes_perso',
+        COURSES: 'courses',
+        USER_PREFERENCES: 'user_preferences'
     };
-    
-    const PAGE_CONFIG = {
-        // Pro
-        objectifs: { title: 'Objectifs', description: 'Suivez vos objectifs principaux et leur progression.', type: COLLECTIONS_PRO.OBJECTIFS, icon: '🎯', mode: 'pro' },
-        actions: { title: 'TO DO Pro', description: 'Gérez vos tâches et actions à réaliser.', type: COLLECTIONS_PRO.ACTIONS, icon: '📝', mode: 'pro' },
-        actionsTerminees: { title: 'Actions Terminées', description: 'Consultez les actions que vous avez achevées.', type: COLLECTIONS_PRO.ACTIONS, icon: '✅', mode: 'pro' },
-        notesReunion: { title: 'Notes de Réunion', description: 'Archivez et retrouvez toutes vos notes.', type: COLLECTIONS_PRO.NOTES_REUNION, icon: '📋', mode: 'pro' },
-        sharedItems: { title: 'Éléments Partagés', description: 'Ces éléments ont été partagés publiquement. Ils sont en lecture seule.', type: COLLECTIONS_PRO.SHARED_ENTRIES, icon: '🌐', mode: 'pro' },
-        // Perso
-        todo_perso: { title: 'TODO Perso', description: 'Vos tâches personnelles.', type: COLLECTIONS_PERSO.TODO, icon: '📌', mode: 'perso' },
-        voyages: { title: 'Voyages', description: 'Planifiez vos prochaines escapades.', type: COLLECTIONS_PERSO.VOYAGES, icon: '✈️', mode: 'perso' },
-        notes_perso: { title: 'Notes Perso', description: 'Vos pensées et mémos personnels.', type: COLLECTIONS_PERSO.NOTES, icon: '🗒️', mode: 'perso' },
-        courses: { title: 'Liste de Courses', description: 'N\'oubliez plus rien au supermarché.', type: COLLECTIONS_PERSO.COURSES, icon: '🛒', mode: 'perso' },
+
+    const NAV_CONFIG = {
+        pro: [
+            { id: 'objectifs', title: 'Objectifs', icon: '🎯', type: COLLECTIONS.OBJECTIFS, description: 'Suivez vos objectifs principaux et leur progression.' },
+            { id: 'actions', title: 'TO DO', icon: '📝', type: COLLECTIONS.ACTIONS, description: 'Gérez vos tâches et actions à réaliser.' },
+            { id: 'actionsTerminees', title: 'Terminées', icon: '✅', type: COLLECTIONS.ACTIONS, description: 'Consultez les actions que vous avez achevées.' },
+            { id: 'notesReunion', title: 'Notes', icon: '📋', type: COLLECTIONS.NOTES_REUNION, description: 'Archivez et retrouvez toutes vos notes.' },
+            { id: 'sharedItems', title: 'Partagés', icon: '🌐', type: COLLECTIONS.SHARED_ENTRIES, description: 'Ces éléments ont été partagés publiquement. Ils sont en lecture seule.' }
+        ],
+        perso: [
+            { id: 'todo_perso', title: 'TODO', icon: '📌', type: COLLECTIONS.TODO, description: 'Vos tâches personnelles.' },
+            { id: 'voyages', title: 'Voyages', icon: '✈️', type: COLLECTIONS.VOYAGES, description: 'Planifiez vos prochaines escapades.' },
+            { id: 'notes_perso', title: 'Notes', icon: '🗒️', type: COLLECTIONS.NOTES_PERSO, description: 'Vos pensées et mémos personnels.' },
+            { id: 'courses', title: 'Courses', icon: '🛒', type: COLLECTIONS.COURSES, description: 'N\'oubliez plus rien au supermarché.' }
+        ]
     };
 
     // --- INITIALISATION FIREBASE ---
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+    let app, db, auth;
+    try {
+        app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+    } catch (e) {
+        console.error("Erreur d'initialisation de Firebase:", e);
+        document.body.innerHTML = `<div class="p-8 text-center text-red-500">Erreur critique de configuration Firebase. L'application ne peut pas démarrer.</div>`;
+    }
+    
     const googleProvider = new GoogleAuthProvider();
 
     // --- VARIABLES GLOBALES & SÉLECTEURS DOM ---
     let userId = null;
-    let expandedCard = null;
-    let currentMode = 'pro';
-    let currentPageId = 'objectifs';
+    let userPreferences = { theme: 'light', startupMode: 'perso' };
+    let currentMode = userPreferences.startupMode;
+    let currentPageId = NAV_CONFIG[currentMode][0].id;
     let unsubscribeListeners = [];
     let allDataCache = {};
-    
-    const authModal = document.getElementById('authModal');
-    const overlay = document.getElementById('overlay');
-    const mainContent = document.querySelector('main');
-    const navPro = document.getElementById('nav-pro');
-    const navPerso = document.getElementById('nav-perso');
+
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalContainer = document.getElementById('modal-container');
+    const pageContent = document.getElementById('page-content');
+    const mainNav = document.getElementById('main-nav');
     const modeSelector = document.getElementById('modeSelector');
-    const pageTemplate = document.getElementById('page-template');
-    const cardTemplate = document.getElementById('card-template-base');
 
     // --- FONCTIONS UTILITAIRES & MODALES ---
-    function showToastNotification(message, type = 'info') {
+    function showToast(message, type = 'info') {
         const toast = document.createElement('div');
-        toast.className = 'toast-notification fixed bottom-5 left-1/2 -translate-x-1/2 text-white px-5 py-3 rounded-lg shadow-xl z-[3000] opacity-0 animate-fadeinout text-base flex items-center gap-2';
+        toast.className = 'fixed bottom-5 right-5 text-white px-5 py-3 rounded-lg shadow-xl z-50 animate-toast text-base flex items-center gap-2';
         const icons = { success: '✔️', error: '❌', info: 'ℹ️' };
         const colors = { success: 'bg-green-600', error: 'bg-red-600', info: 'bg-blue-600' };
         
@@ -253,75 +198,213 @@
         setTimeout(() => toast.remove(), 4000);
     }
 
-    async function showConfirmationModal(message, confirmText = "Oui", cancelText = "Non") {
+    function showModal(content, maxWidthClass = 'max-w-xl') {
+        modalContainer.innerHTML = content;
+        modalContainer.className = `bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full ${maxWidthClass} max-h-[90vh] flex flex-col animate-slide-in-up`;
+        modalOverlay.classList.remove('hidden');
+        modalContainer.querySelector('.modal-close-btn')?.addEventListener('click', hideModal);
+    }
+
+    function hideModal() {
+        modalOverlay.classList.add('hidden');
+        modalContainer.innerHTML = '';
+    }
+
+    async function showConfirmationModal(message) {
         return new Promise(resolve => {
-            const modalContainer = document.createElement('div');
-            modalContainer.id = "confirmation-modal";
-            modalContainer.innerHTML = `
-                <div class="fixed inset-0 bg-black bg-opacity-50 z-[2999] animate-fadein"></div>
-                <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-xl z-[3000] text-center max-w-sm w-11/12 animate-expand">
-                    <p class="mb-5 text-gray-800">${message}</p>
+            const content = `
+                <div class="p-6 text-center">
+                    <p class="mb-6 text-lg text-gray-800 dark:text-gray-200">${message}</p>
                     <div class="flex justify-center gap-4">
-                        <button class="confirm-yes bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded">${confirmText}</button>
-                        <button class="confirm-no bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded">${cancelText}</button>
+                        <button id="confirm-yes" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg">Oui, supprimer</button>
+                        <button id="confirm-no" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg">Annuler</button>
                     </div>
                 </div>
             `;
-            document.body.appendChild(modalContainer);
-
-            const cleanup = (result) => {
-                modalContainer.remove();
-                resolve(result);
-            };
-
-            modalContainer.querySelector('.confirm-yes').onclick = () => cleanup(true);
-            modalContainer.querySelector('.confirm-no').onclick = () => cleanup(false);
-            modalContainer.firstElementChild.onclick = () => cleanup(false);
+            showModal(content, 'max-w-sm');
+            document.getElementById('confirm-yes').onclick = () => { hideModal(); resolve(true); };
+            document.getElementById('confirm-no').onclick = () => { hideModal(); resolve(false); };
         });
     }
-    
+
+    function autoResizeTextarea(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
+    }
+
     const getTimeStamp = () => new Date().toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'medium' });
-    
+
+    // --- GESTION DES PRÉFÉRENCES ---
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        userPreferences.theme = theme;
+    }
+
+    async function saveUserPreferences(prefs) {
+        if (!userId) return;
+        const prefRef = doc(db, `artifacts/${appId}/users/${userId}/${COLLECTIONS.USER_PREFERENCES}`, 'settings');
+        try {
+            await setDoc(prefRef, prefs, { merge: true });
+        } catch (error) {
+            console.error("Erreur de sauvegarde des préférences:", error);
+        }
+    }
+
+    async function loadUserPreferences() {
+        if (!userId) return userPreferences; // Retourne les préférences par défaut
+        const prefRef = doc(db, `artifacts/${appId}/users/${userId}/${COLLECTIONS.USER_PREFERENCES}`, 'settings');
+        try {
+            const docSnap = await getDoc(prefRef);
+            if (docSnap.exists()) {
+                return { ...userPreferences, ...docSnap.data() };
+            }
+            return userPreferences;
+        } catch (error) {
+            console.error("Erreur de chargement des préférences:", error);
+            return userPreferences;
+        }
+    }
+
+    function showPreferencesModal() {
+        const content = `
+            <div class="flex-shrink-0 p-4 border-b dark:border-gray-700 flex justify-between items-center">
+                <h3 class="text-xl font-bold">Préférences</h3>
+                <button class="modal-close-btn text-3xl font-bold text-gray-400 hover:text-gray-600">&times;</button>
+            </div>
+            <div class="p-6 space-y-6">
+                <div>
+                    <label class="block text-lg font-medium mb-2">Thème d'affichage</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2 p-3 border dark:border-gray-600 rounded-lg cursor-pointer">
+                            <input type="radio" name="theme" value="light" ${userPreferences.theme === 'light' ? 'checked' : ''}>
+                            ☀️ Clair
+                        </label>
+                        <label class="flex items-center gap-2 p-3 border dark:border-gray-600 rounded-lg cursor-pointer">
+                            <input type="radio" name="theme" value="dark" ${userPreferences.theme === 'dark' ? 'checked' : ''}>
+                            🌙 Sombre
+                        </label>
+                    </div>
+                </div>
+                 <div>
+                    <label class="block text-lg font-medium mb-2">Mode de démarrage par défaut</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2 p-3 border dark:border-gray-600 rounded-lg cursor-pointer">
+                            <input type="radio" name="startupMode" value="pro" ${userPreferences.startupMode === 'pro' ? 'checked' : ''}>
+                            🏢 Pro
+                        </label>
+                        <label class="flex items-center gap-2 p-3 border dark:border-gray-600 rounded-lg cursor-pointer">
+                            <input type="radio" name="startupMode" value="perso" ${userPreferences.startupMode === 'perso' ? 'checked' : ''}>
+                            🏠 Perso
+                        </label>
+                    </div>
+                </div>
+            </div>
+        `;
+        showModal(content, 'max-w-md');
+        
+        document.querySelectorAll('input[name="theme"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                applyTheme(e.target.value);
+                saveUserPreferences({ theme: e.target.value });
+            });
+        });
+        document.querySelectorAll('input[name="startupMode"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                userPreferences.startupMode = e.target.value;
+                saveUserPreferences({ startupMode: e.target.value });
+            });
+        });
+    }
+
     // --- GESTION DE L'AUTHENTIFICATION ---
-    onAuthStateChanged(auth, user => {
-        const authModalCloseBtn = authModal.querySelector('.close-button');
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
             userId = user.uid;
-            document.getElementById('userIdDisplay').innerText = user.email || 'Connecté';
+            userPreferences = await loadUserPreferences();
+            
+            applyTheme(userPreferences.theme);
+            currentMode = userPreferences.startupMode;
+            currentPageId = NAV_CONFIG[currentMode][0].id;
+
+            document.getElementById('userIdDisplay').textContent = user.isAnonymous ? 'Mode Invité' : (user.email || 'Connecté');
             document.getElementById('authBtn').classList.add('hidden');
+            document.getElementById('preferencesBtn').classList.remove('hidden');
             document.getElementById('signOutBtn').classList.remove('hidden');
-            closeAuthModal();
-            authModalCloseBtn.classList.remove('hidden');  
-            mainContent.classList.remove('hidden');
-            modeSelector.classList.remove('hidden');
+            document.getElementById('modeSelector').classList.remove('hidden');
+            document.getElementById('main-nav').classList.remove('hidden');
+            
+            hideModal();
             setupRealtimeListeners();
             setMode(currentMode);
         } else {
             userId = null;
-            document.getElementById('userIdDisplay').innerText = 'Non connecté';
+            applyTheme('light'); // Revenir au thème clair par défaut
+            document.getElementById('userIdDisplay').textContent = 'Non connecté';
             document.getElementById('authBtn').classList.remove('hidden');
+            document.getElementById('preferencesBtn').classList.add('hidden');
             document.getElementById('signOutBtn').classList.add('hidden');
-            mainContent.classList.add('hidden');
-            modeSelector.classList.add('hidden');
-            navPro.classList.add('hidden');
-            navPerso.classList.add('hidden');
-            document.querySelectorAll('.content').forEach(container => container.innerHTML = '');
-            detachRealtimeListeners(); 
-            openAuthModal();
-            authModalCloseBtn.classList.add('hidden');
+            document.getElementById('modeSelector').classList.add('hidden');
+            document.getElementById('main-nav').classList.add('hidden');
+            pageContent.innerHTML = '';
+            detachRealtimeListeners();
+            showAuthModal();
         }
     });
 
-    const openAuthModal = () => { authModal.classList.remove('hidden'); overlay.classList.remove('hidden'); };
-    const closeAuthModal = () => {
-        if (!authModal.classList.contains('hidden')) {
-            authModal.classList.add('hidden');
-            if(!expandedCard) overlay.classList.add('hidden');
-            document.getElementById('email').value = '';
-            document.getElementById('password').value = '';
-        }
-    };
+    function showAuthModal() {
+        const content = `
+            <div class="p-6 md:p-8 relative">
+                <button class="modal-close-btn absolute top-4 right-5 text-3xl font-bold text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">&times;</button>
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">Connexion / Inscription</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label for="email" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Email :</label>
+                        <input type="email" id="email" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" placeholder="votre@email.com" autocomplete="email">
+                    </div>
+                    <div>
+                        <label for="password" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Mot de passe :</label>
+                        <input type="password" id="password" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" placeholder="********" autocomplete="current-password">
+                    </div>
+                    <div class="flex flex-col gap-3 pt-2">
+                        <button id="signInEmailBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg">Se connecter</button>
+                        <button id="signUpEmailBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg">S'inscrire</button>
+                    </div>
+                    <div class="relative flex py-4 items-center">
+                        <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div><span class="flex-shrink mx-4 text-gray-400 dark:text-gray-500">OU</span><div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+                    </div>
+                     <button id="signInGoogleBtn" class="bg-white hover:bg-gray-100 text-gray-800 font-bold py-3 px-4 rounded-lg shadow-md flex items-center justify-center gap-3 border border-gray-300 dark:border-gray-600 w-full">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google icon" class="w-5 h-5"> Se connecter avec Google
+                    </button>
+                </div>
+            </div>
+        `;
+        showModal(content);
+        document.getElementById('signInEmailBtn').addEventListener('click', handleEmailSignIn);
+        document.getElementById('signUpEmailBtn').addEventListener('click', handleEmailSignUp);
+        document.getElementById('signInGoogleBtn').addEventListener('click', handleGoogleSignIn);
+    }
     
+    async function handleEmailSignIn() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        try { await signInWithEmailAndPassword(auth, email, password); showToast('Connexion réussie !', 'success'); } 
+        catch (error) { showToast(`Erreur: ${error.code}`, 'error'); }
+    }
+    async function handleEmailSignUp() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        try { await createUserWithEmailAndPassword(auth, email, password); showToast('Inscription réussie !', 'success'); } 
+        catch (error) { showToast(`Erreur: ${error.code}`, 'error'); }
+    }
+    async function handleGoogleSignIn() {
+        try { await signInWithPopup(auth, googleProvider); showToast('Connexion Google réussie !', 'success'); } 
+        catch (error) { showToast(`Erreur: ${error.code}`, 'error'); }
+    }
+
     // --- GESTION DES DONNÉES (FIRESTORE) ---
     function detachRealtimeListeners() {
         unsubscribeListeners.forEach(unsubscribe => unsubscribe());
@@ -332,467 +415,337 @@
         if (!userId) return;
         detachRealtimeListeners();
 
-        const createListener = (collectionName, cacheKey, isPublic = false) => {
+        const allCollections = [...new Set(Object.values(NAV_CONFIG).flat().map(c => c.type))];
+
+        allCollections.forEach(collectionName => {
+            const isPublic = collectionName === COLLECTIONS.SHARED_ENTRIES;
             const path = isPublic 
-                ? `artifacts/${firebaseConfig.appId}/public/data/${collectionName}`
-                : `artifacts/${firebaseConfig.appId}/users/${userId}/${collectionName}`;
-            const q = query(collection(db, path));
+                ? `artifacts/${appId}/public/data/${collectionName}`
+                : `artifacts/${appId}/users/${userId}/${collectionName}`;
             
+            const q = query(collection(db, path));
             const unsubscribe = onSnapshot(q, (snapshot) => {
-                allDataCache[cacheKey] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                const pageConfig = PAGE_CONFIG[currentPageId];
-                if (pageConfig && (pageConfig.type === collectionName || (currentPageId === 'actionsTerminees' && collectionName === COLLECTIONS_PRO.ACTIONS))) {
-                     triggerRenderForCurrentPage();
+                allDataCache[collectionName] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const currentPageConfig = NAV_CONFIG[currentMode].find(p => p.id === currentPageId);
+                if (currentPageConfig && currentPageConfig.type === collectionName) {
+                    renderCurrentPageContent();
                 }
             }, (error) => {
-                console.error(`Error listening to ${collectionName}:`, error);
-                showToastNotification(`Erreur de permissions pour ${collectionName}.`, 'error');
+                console.error(`Erreur d'écoute sur ${collectionName}:`, error);
             });
             unsubscribeListeners.push(unsubscribe);
-        };
-        
-        // Listen to all collections
-        Object.values(COLLECTIONS_PRO).forEach(name => createListener(name, name, name === COLLECTIONS_PRO.SHARED_ENTRIES));
-        Object.values(COLLECTIONS_PERSO).forEach(name => createListener(name, name));
+        });
     }
-    
+
     // --- LOGIQUE DE RENDU ET D'INTERFACE ---
     function setMode(mode) {
         currentMode = mode;
-        document.querySelectorAll('.mode-selector button').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.mode === mode);
+        document.querySelectorAll('#modeSelector button').forEach(btn => {
+            const isActive = btn.dataset.mode === mode;
+            btn.classList.toggle('bg-white', isActive);
+            btn.classList.toggle('dark:bg-gray-300', isActive);
+            btn.classList.toggle('text-blue-700', isActive);
+            btn.classList.toggle('dark:text-gray-900', isActive);
+            btn.classList.toggle('text-white', !isActive);
         });
-
-        if (mode === 'pro') {
-            navPro.classList.remove('hidden');
-            navPerso.classList.add('hidden');
-            showPage('objectifs');
-        } else {
-            navPro.classList.add('hidden');
-            navPerso.classList.remove('hidden');
-            showPage('todo_perso');
-        }
+        
+        const navItems = NAV_CONFIG[mode];
+        mainNav.innerHTML = navItems.map(item => `
+            <button class="nav-button text-white/80 hover:text-white hover:bg-white/20 px-3 py-2 rounded-md text-sm font-medium transition-colors" data-target="${item.id}">
+                <span class="mr-1">${item.icon}</span>${item.title}
+            </button>
+        `).join('');
+        
+        showPage(navItems[0].id);
     }
 
     function showPage(id) {
-        if(expandedCard) closeExpandedCard();
-
         currentPageId = id;
-        document.querySelectorAll('.content').forEach(section => {
-            section.classList.add('hidden');
-            section.innerHTML = '';
+        
+        mainNav.querySelectorAll('.nav-button').forEach(button => {
+            const isActive = button.dataset.target === id;
+            button.classList.toggle('bg-white/20', isActive);
+            button.classList.toggle('dark:bg-gray-300/20', isActive);
+            button.classList.toggle('font-bold', isActive);
         });
-        
-        const activePage = document.getElementById(id);
-        if (!activePage) return;
-        
-        const config = PAGE_CONFIG[id];
-        const pageFragment = pageTemplate.content.cloneNode(true);
+
+        const config = NAV_CONFIG[currentMode].find(p => p.id === id);
+        if (!config) return;
+
+        const pageFragment = document.getElementById('page-template').content.cloneNode(true);
         pageFragment.querySelector('.page-title').textContent = config.title;
         pageFragment.querySelector('.page-description').textContent = config.description;
         pageFragment.querySelector('.searchBar').dataset.page = id;
+
         const addButton = pageFragment.querySelector('.add-new-item-btn');
-        if (addButton) {
-            addButton.dataset.type = config.type;
-            if (id === 'actionsTerminees' || id === 'sharedItems') {
-                addButton.remove();
-            }
+        if (id === 'actionsTerminees' || id === 'sharedItems') {
+            addButton.remove();
+        } else {
+            addButton.onclick = () => showItemModal(null, config.type);
         }
-        
-        activePage.appendChild(pageFragment);
-        activePage.classList.remove('hidden');
 
-        const activeNav = currentMode === 'pro' ? navPro : navPerso;
-        activeNav.querySelectorAll('.nav-button').forEach(button => {
-            button.classList.toggle('active', button.dataset.target === id);
-        });
-        triggerRenderForCurrentPage();
+        pageContent.innerHTML = '';
+        pageContent.appendChild(pageFragment);
+
+        renderCurrentPageContent();
     }
-    
-    function triggerRenderForCurrentPage() {
-        if (expandedCard) return;
-        const pageElement = document.getElementById(currentPageId);
-        if(!pageElement) return;
 
-        const searchInput = pageElement.querySelector('.searchBar');
-        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
-        
-        const config = PAGE_CONFIG[currentPageId];
+    function renderCurrentPageContent() {
+        const container = pageContent.querySelector('.grid-container');
+        if (!container) return;
+
+        const searchTerm = (pageContent.querySelector('.searchBar')?.value || '').toLowerCase();
+        const config = NAV_CONFIG[currentMode].find(p => p.id === currentPageId);
         if (!config) return;
 
-        const options = { searchTerm, isReadOnly: false, displayCompleted: false };
         let data = allDataCache[config.type] || [];
         
-        if (currentPageId === 'actionsTerminees') {
-            options.displayCompleted = true;
+        if (config.id === 'actionsTerminees') {
+            data = data.filter(entry => entry.isCompleted);
+        } else if (config.type === COLLECTIONS.ACTIONS || config.type === COLLECTIONS.TODO) {
+            data = data.filter(entry => !entry.isCompleted);
         }
-        if (currentPageId === 'sharedItems') {
-            options.isReadOnly = true;
+
+        if (searchTerm) {
+            data = data.filter(entry => JSON.stringify(entry).toLowerCase().includes(searchTerm));
         }
         
-        renderEntries(currentPageId, data, options);
-    }
-
-    function renderEntries(containerId, data, options) {
-        const container = document.querySelector(`#${containerId} .grid-container`);
-        if (!container) return;
         container.innerHTML = '';
-
-        const filteredData = data.filter(entry => {
-            const pageConfig = PAGE_CONFIG[containerId];
-            if (!pageConfig) return false;
-
-            if (pageConfig.type === COLLECTIONS_PRO.ACTIONS && (!!entry.isCompleted !== options.displayCompleted)) return false;
-            if (pageConfig.type === COLLECTIONS_PERSO.TODO && (!!entry.isCompleted !== options.displayCompleted)) return false;
-            
-            if (options.searchTerm) {
-                return JSON.stringify(entry).toLowerCase().includes(options.searchTerm);
-            }
-            return true;
-        });
-
-        if (filteredData.length === 0) {
-            container.innerHTML = `<p class="text-center text-gray-500 col-span-full mt-12 text-lg">📂<br>${options.searchTerm ? 'Aucun résultat trouvé.' : 'Rien à afficher ici pour le moment.'}</p>`;
+        if (data.length === 0) {
+            container.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400 col-span-full mt-12 text-lg">📂<br>${searchTerm ? 'Aucun résultat trouvé.' : 'Rien à afficher ici.'}</p>`;
             return;
         }
 
-        filteredData.forEach(entry => {
-            const cardDiv = createCardElement(entry, options.isReadOnly);
-            container.appendChild(cardDiv);
+        data.forEach(entry => {
+            const cardEl = createCardElement(entry, config);
+            container.appendChild(cardEl);
         });
     }
-    
-    function createCardElement(entry, isReadOnly) {
-        const card = cardTemplate.content.cloneNode(true).firstElementChild;
-        const originalType = isReadOnly ? entry.originalCollection : PAGE_CONFIG[currentPageId].type;
+
+    function createCardElement(entry, pageConfig) {
+        const cardTemplate = document.getElementById('card-template').content.cloneNode(true);
+        const card = cardTemplate.firstElementChild;
+        const isReadOnly = pageConfig.id === 'sharedItems';
+        const originalType = isReadOnly ? entry.originalCollection : pageConfig.type;
         
         card.dataset.id = entry.id;
         card.dataset.type = originalType;
-        card.dataset.readonly = isReadOnly;
+        card.onclick = () => showItemModal(entry, originalType);
 
         card.querySelector('.card-title').textContent = entry.titre || 'Sans titre';
-        const pageKey = Object.keys(PAGE_CONFIG).find(k => PAGE_CONFIG[k].type === originalType)
-        card.querySelector('.card-icon').textContent = PAGE_CONFIG[pageKey]?.icon || '❓';
-
+        card.querySelector('.card-icon').textContent = NAV_CONFIG[currentMode].find(p => p.id === pageConfig.id)?.icon || '❓';
+        
         const summaryEl = card.querySelector('.card-summary');
-        if (originalType === COLLECTIONS_PRO.OBJECTIFS) {
+        if (originalType === COLLECTIONS.OBJECTIFS) {
             const pct = entry.pourcentage || 0;
             const progressClass = pct < 25 ? 'bg-red-500' : (pct < 75 ? 'bg-yellow-500' : 'bg-green-500');
-            summaryEl.innerHTML = `<div class="bg-gray-200 rounded-full h-6 my-2 shadow-inner"><div class="h-full text-center text-white font-bold text-sm leading-6 transition-all duration-500 ${progressClass}" style="width: ${pct}%">${pct}%</div></div>`;
-        } else if (originalType === COLLECTIONS_PRO.ACTIONS) {
-            let summaryContent = '';
-            if (entry.deadLine) {
-                summaryContent += `<span>Deadline: <strong class="${new Date() > new Date(entry.deadLine) && !entry.isCompleted ? 'deadline-overdue' : ''}">${new Date(new Date(entry.deadLine).toLocaleString('en-US',{timeZone:'Europe/Paris'})).toLocaleDateString('fr-FR')}</strong></span>`;
-            } else {
-                summaryContent += 'Aucune deadline.';
-            }
-            if (entry.contenu) {
-                summaryContent += `<p class="mt-2 text-xs italic text-gray-500">${entry.contenu.substring(0, 80)}...</p>`;
-            }
-            summaryEl.innerHTML = summaryContent;
-        } else if (originalType === COLLECTIONS_PERSO.TODO) {
-            if (entry.contenu) {
-                summaryEl.textContent = `${entry.contenu.substring(0, 120)}...`;
-            }
-        } else if ([COLLECTIONS_PRO.NOTES_REUNION, COLLECTIONS_PERSO.NOTES, COLLECTIONS_PERSO.VOYAGES].includes(originalType)) {
-            summaryEl.textContent = `${(entry.contenu || '').substring(0, 120)}...`;
-        } else if (originalType === COLLECTIONS_PERSO.COURSES) {
-            const items = entry.items || [];
-            const completedItems = items.filter(item => item.completed).length;
-            summaryEl.textContent = `${completedItems} / ${items.length} articles cochés`;
+            summaryEl.innerHTML = `<div class="bg-gray-200 dark:bg-gray-700 rounded-full h-5 my-2 shadow-inner"><div class="h-full text-center text-white font-bold text-xs leading-5 transition-all duration-500 ${progressClass}" style="width: ${pct}%">${pct}%</div></div>`;
+        } else if (originalType === COLLECTIONS.ACTIONS && entry.deadLine) {
+            summaryEl.innerHTML = `<span>Deadline: <strong class="${new Date() > new Date(entry.deadLine) && !entry.isCompleted ? 'text-red-500 font-semibold' : ''}">${new Date(entry.deadLine).toLocaleDateString('fr-FR')}</strong></span>`;
+        } else if (originalType === COLLECTIONS.COURSES) {
+             const items = entry.items || [];
+             const completedItems = items.filter(item => item.completed).length;
+             summaryEl.textContent = `${completedItems} / ${items.length} articles cochés`;
+        } else if (entry.contenu) {
+            summaryEl.textContent = `${entry.contenu.substring(0, 100)}...`;
         }
 
         const tagsContainer = card.querySelector('.tags-display');
         (entry.tags || []).forEach(tag => {
             const tagEl = document.createElement('span');
-            tagEl.className = 'tag-item bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs font-semibold';
+            tagEl.className = 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 px-2 py-1 rounded-full text-xs font-semibold';
             tagEl.textContent = tag;
             tagsContainer.appendChild(tagEl);
         });
-        
+
         return card;
     }
 
-    // --- CARD EXPANSION & MODAL LOGIC ---
-    
-function closeExpandedCard() {
-    if (!expandedCard) return;
+    // --- LOGIQUE DE LA MODALE D'ÉDITION/CRÉATION ---
+    function showItemModal(entry, type) {
+        const isNew = !entry;
+        const isReadOnly = currentPageId === 'sharedItems';
+        const data = isNew ? { titre: '', contenu: '', tags: [] } : entry;
 
-    overlay.classList.add('hidden');
-
-    expandedCard.classList.remove(
-        'expanded-card', 'fixed', 'top-1/2', 'left-1/2',
-        'w-[95%]', 'h-[90%]', 'overflow-y-auto', 'p-8', 'shadow-2xl',
-        'z-[1001]', 'animate-expand', '-translate-x-1/2', '-translate-y-1/2'
-    );
-
-    // Restaurer la carte à son emplacement initial
-    if (expandedCard._originalParent) {
-        if (expandedCard._originalNextSibling) {
-            expandedCard._originalParent.insertBefore(expandedCard, expandedCard._originalNextSibling);
-        } else {
-            expandedCard._originalParent.appendChild(expandedCard);
-        }
-    }
-
-    const detailView = expandedCard.querySelector('.hidden-detail');
-    if (detailView) {
-        detailView.classList.add('hidden');
-        detailView.innerHTML = '';
-    }
-
-    const closeButton = expandedCard.querySelector('.close-button');
-    if (closeButton) closeButton.remove();
-
-    expandedCard = null;
-    triggerRenderForCurrentPage();
-}
-
-
-    function openNewItemModal(type) {
-        if (expandedCard) closeExpandedCard();
-
-        const modal = document.createElement('div');
-        modal.id = 'new-item-modal';
-        // MODIFICATION ICI: max-w-3xl a été remplacé par max-w-6xl
-        modal.className = 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-6xl bg-white p-6 rounded-lg shadow-2xl z-[1001] animate-expand h-auto max-h-5/6 overflow-y-auto';
-        
         let formHtml = '';
-        const config = Object.values(PAGE_CONFIG).find(p => p.type === type);
-        if (!config) return;
-
-        formHtml += `<h3 class="text-2xl font-bold text-gray-800 mb-6">${config.icon} Ajouter: ${config.title}</h3>`;
+        formHtml += `<div class="mb-4"><label class="text-sm font-medium text-gray-700 dark:text-gray-300">Titre</label><input type="text" data-field="titre" value="${data.titre}" placeholder="Titre de l'élément" class="w-full p-3 mt-1 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"></div>`;
         
-        formHtml += `<div class="mb-4">
-                        <label for="new-titre" class="block text-sm font-bold text-gray-700 mb-1">Titre</label>
-                        <input type="text" id="new-titre" placeholder="Titre de l'élément" required class="editable-field !mb-0">
-                     </div>`;
-        
-        if (type === COLLECTIONS_PRO.OBJECTIFS) {
-            formHtml += `<div class="mb-4">
-                            <label for="new-description" class="block text-sm font-bold text-gray-700 mb-1">Description</label>
-                            <textarea id="new-description" placeholder="Description de l'objectif" class="editable-field !mb-0 min-h-[150px]"></textarea>
-                         </div>`;
-            formHtml += `<div class="mb-4">
-                            <label for="new-pourcentage" class="block text-sm font-bold text-gray-700 mb-1">Pourcentage</label>
-                            <input type="range" id="new-pourcentage" min="0" max="100" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                         </div>`;
-        } else if (type === COLLECTIONS_PRO.ACTIONS) {
-            formHtml += `<div class="mb-4">
-                            <label for="new-contenu" class="block text-sm font-bold text-gray-700 mb-1">Contenu / Description</label>
-                            <textarea id="new-contenu" placeholder="Détails de la tâche..." class="editable-field !mb-0 min-h-[120px]"></textarea>
-                         </div>`;
-            formHtml += `<div class="mb-4">
-                            <label for="new-deadLine" class="block text-sm font-bold text-gray-700 mb-1">Deadline</label>
-                            <input type="date" id="new-deadLine" class="editable-field !mb-0">
-                         </div>`;
-        } else if (type === COLLECTIONS_PERSO.TODO) {
-            formHtml += `<div class="mb-4">
-                            <label for="new-contenu" class="block text-sm font-bold text-gray-700 mb-1">Contenu / Description</label>
-                            <textarea id="new-contenu" placeholder="Détails de la tâche..." class="editable-field !mb-0 min-h-[120px]"></textarea>
-                         </div>`;
-        } else if ([COLLECTIONS_PRO.NOTES_REUNION, COLLECTIONS_PERSO.NOTES, COLLECTIONS_PERSO.VOYAGES].includes(type)) {
-            formHtml += `<div class="mb-4">
-                            <label for="new-contenu" class="block text-sm font-bold text-gray-700 mb-1">Contenu</label>
-                            <textarea id="new-contenu" placeholder="Contenu de la note" class="editable-field !mb-0 min-h-[200px]"></textarea>
-                         </div>`;
-        } else if (type === COLLECTIONS_PERSO.COURSES) {
-            formHtml += `<div class="mb-4">
-                            <label for="new-items" class="block text-sm font-bold text-gray-700 mb-1">Articles (un par ligne)</label>
-                            <textarea id="new-items" placeholder="Lait\nOeufs\nPain" class="editable-field !mb-0 min-h-[200px]"></textarea>
-                         </div>`;
-        }
-        
-        if (type !== COLLECTIONS_PERSO.COURSES) {
-            formHtml += `<div class="mb-4">
-                            <label for="new-tags" class="block text-sm font-bold text-gray-700 mb-1">Tags</label>
-                            <input type="text" id="new-tags" placeholder="marketing, projet_alpha, urgent" class="editable-field !mb-0">
-                         </div>`;
+        if (type === COLLECTIONS.OBJECTIFS) {
+            formHtml += `<div class="mb-4"><label class="text-sm font-medium text-gray-700 dark:text-gray-300">Description</label><textarea data-field="description" class="w-full p-3 mt-1 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">${data.description || ''}</textarea></div>`;
+            formHtml += `<div class="mb-4"><label class="text-sm font-medium text-gray-700 dark:text-gray-300">Pourcentage: <span id="pct-label" class="font-bold">${data.pourcentage || 0}%</span></label><input type="range" data-field="pourcentage" min="0" max="100" value="${data.pourcentage || 0}" class="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer"></div>`;
+        } else if (type === COLLECTIONS.ACTIONS) {
+            formHtml += `<div class="mb-4"><label class="text-sm font-medium text-gray-700 dark:text-gray-300">Contenu / Description</label><textarea data-field="contenu" class="w-full p-3 mt-1 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">${data.contenu || ''}</textarea></div>`;
+            formHtml += `<div class="mb-4"><label class="text-sm font-medium text-gray-700 dark:text-gray-300">Deadline</label><input type="date" data-field="deadLine" value="${data.deadLine || ''}" class="w-full p-3 mt-1 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"></div>`;
+        } else if (type === COLLECTIONS.COURSES) {
+            formHtml += `<div class="mb-4"><label class="text-sm font-medium text-gray-700 dark:text-gray-300">Articles</label><div id="course-items-list" class="mt-2 space-y-2"></div></div>`;
+            formHtml += `<div class="flex gap-2"><input type="text" id="new-course-item-input" placeholder="Nouvel article" class="flex-grow p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"><button type="button" id="add-course-item-btn" class="bg-blue-500 text-white px-4 rounded-lg">Ajouter</button></div>`;
+        } else { 
+             formHtml += `<div class="mb-4 flex-grow flex flex-col"><label class="text-sm font-medium text-gray-700 dark:text-gray-300">Contenu</label><textarea data-field="contenu" class="w-full p-3 mt-1 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 flex-grow">${data.contenu || ''}</textarea></div>`;
         }
 
-        formHtml += `
-            <div class="flex justify-end gap-4 mt-8 pt-4 border-t">
-                <button type="button" class="cancel-btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">Annuler</button>
-                <button type="submit" class="submit-btn bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Ajouter</button>
-            </div>`;
-        
-        const form = document.createElement('form');
-        form.innerHTML = formHtml;
-        modal.appendChild(form);
-        
-        document.body.appendChild(modal);
-        expandedCard = modal;
-        overlay.classList.remove('hidden');
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            addEntry(type);
-        });
-        modal.querySelector('.cancel-btn').addEventListener('click', closeExpandedCard);
-    }
-
-
-
-function toggleCardExpansion(cardElement) {
-    if (expandedCard) closeExpandedCard();
-
-    expandedCard = cardElement;
-    const { id, type, readonly } = cardElement.dataset;
-    const isReadOnly = readonly === 'true';
-    const entry = allDataCache[type] ? allDataCache[type].find(item => item.id === id) : null;
-    if (!entry) return;
-
-    // Sauvegarder la position initiale
-    expandedCard._originalParent = cardElement.parentNode;
-    expandedCard._originalNextSibling = cardElement.nextSibling;
-
-    // Déplacer la carte dans le body pour éviter les contraintes de la grille
-    document.body.appendChild(cardElement);
-
-    // Appliquer les styles plein écran avec gestion du contenu long
-    cardElement.classList.add(
-        'expanded-card', 'fixed', 'top-4', 'left-1/2',
-        'w-[95%]', 'max-h-[90%]', 'overflow-y-auto', 'p-8', 'shadow-2xl',
-        'z-[1001]', 'animate-expand', '-translate-x-1/2'
-    );
-
-    overlay.classList.remove('hidden');
-
-    const detailContainer = cardElement.querySelector('.hidden-detail');
-    detailContainer.innerHTML = buildDetailView(entry, type, isReadOnly);
-    detailContainer.classList.remove('hidden');
-
-    const closeButton = document.createElement('span');
-    closeButton.className = 'close-button sticky top-0 right-0 float-right text-3xl font-bold text-gray-400 cursor-pointer z-[1002] bg-white bg-opacity-80 px-2 rounded-full';
-    closeButton.innerHTML = '&times;';
-    closeButton.onclick = closeExpandedCard;
-    cardElement.prepend(closeButton);
-}
-
-
-
-
-function buildDetailView(entry, type, isReadOnly) {
-        let detailsHtml = `<h3 class="text-2xl font-bold text-gray-800 mb-4">${entry.titre}</h3>`;
-        
-        if (type === COLLECTIONS_PRO.OBJECTIFS) {
-            detailsHtml += `<label class="text-sm font-bold text-gray-700">Description</label><textarea data-field="description" class="editable-field min-h-[150px]">${entry.description || ''}</textarea>`;
-            detailsHtml += `<label class="text-sm font-bold text-gray-700">Pourcentage: <span class="font-bold">${entry.pourcentage || 0}%</span></label><input type="range" data-field="pourcentage" min="0" max="100" value="${entry.pourcentage || 0}" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mb-4">`;
-        } else if (type === COLLECTIONS_PRO.ACTIONS || type === COLLECTIONS_PERSO.TODO) {
-            detailsHtml += `<label class="text-sm font-bold text-gray-700">Contenu / Description</label><textarea data-field="contenu" class="editable-field min-h-[150px]">${entry.contenu || ''}</textarea>`;
-            if (type === COLLECTIONS_PRO.ACTIONS) {
-                detailsHtml += `<label class="text-sm font-bold text-gray-700">Deadline</label><input type="date" data-field="deadLine" value="${entry.deadLine || ''}" class="editable-field">`;
-            }
-        } else if ([COLLECTIONS_PRO.NOTES_REUNION, COLLECTIONS_PERSO.NOTES, COLLECTIONS_PERSO.VOYAGES].includes(type)) {
-            // La seule modification est ici : la classe de la textarea
-            detailsHtml += `<label class="text-sm font-bold text-gray-700">Contenu</label><textarea data-field="contenu" class="editable-field !h-[60vh]">${entry.contenu || ''}</textarea>`;
-        } else if (type === COLLECTIONS_PERSO.COURSES) {
-            detailsHtml += `<div class="courses-list mb-4"></div>`; // Container for dynamic items
-            detailsHtml += `<form class="add-course-item-form flex gap-2"><input type="text" placeholder="Nouvel article" class="editable-field !mb-0 flex-grow"><button type="submit" class="bg-blue-500 text-white px-4 rounded-md">Ajouter</button></form>`;
-            setTimeout(() => {
-                const listContainer = expandedCard.querySelector('.courses-list');
-                if (listContainer) renderCourseItems(listContainer, entry.items || []);
-            }, 0);
-        }
-        
-        if (type !== COLLECTIONS_PERSO.COURSES) {
-             detailsHtml += `<label class="text-sm font-bold text-gray-700">Tags</label><input type="text" data-field="tags" value="${(entry.tags || []).join(', ')}" class="editable-field">`;
+        if (type !== COLLECTIONS.COURSES) {
+            formHtml += `<div class="mb-4"><label class="text-sm font-medium text-gray-700 dark:text-gray-300">Tags (séparés par des virgules)</label><input type="text" data-field="tags" value="${(data.tags || []).join(', ')}" class="w-full p-3 mt-1 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"></div>`;
         }
 
-        let actionsHtml = `<div class="actions flex flex-wrap gap-3 mt-6 justify-end pt-4 border-t">`;
+        let historyHtml = '';
+        if (!isNew && data.historique) {
+            historyHtml = `<div class="historique text-xs text-gray-500 dark:text-gray-400 mt-6 bg-gray-100 dark:bg-gray-900/50 p-3 border dark:border-gray-700 rounded-md max-h-24 overflow-y-auto"><strong>Historique :</strong><ul class="list-none pl-0 mt-1">${data.historique.slice().reverse().map(line => `<li>• ${line}</li>`).join('')}</ul></div>`;
+        }
+
+        let actionsHtml = '<div class="modal-actions flex flex-wrap gap-3 justify-end">';
         if (!isReadOnly) {
-            if ([COLLECTIONS_PRO.ACTIONS, COLLECTIONS_PERSO.TODO].includes(type)) {
-                if (entry.isCompleted) {
-                    actionsHtml += `<button data-action="markAsCompleted" data-value="false" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">↩️ Ré-ouvrir</button>`;
-                } else {
-                    actionsHtml += `<button data-action="markAsCompleted" data-value="true" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">✅ Terminer</button>`;
+            if (isNew) {
+                actionsHtml += `<button id="save-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">💾 Enregistrer</button>`;
+            } else {
+                 if ([COLLECTIONS.ACTIONS, COLLECTIONS.TODO].includes(type)) {
+                    if (data.isCompleted) {
+                        actionsHtml += `<button data-action="toggleComplete" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg">↩️ Ré-ouvrir</button>`;
+                    } else {
+                        actionsHtml += `<button data-action="toggleComplete" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">✅ Terminer</button>`;
+                    }
                 }
+                if (currentMode === 'pro') {
+                    actionsHtml += `<button data-action="share" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">🔗 Partager</button>`;
+                }
+                actionsHtml += `<button data-action="delete" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">🗑️ Supprimer</button>`;
             }
-            if (currentMode === 'pro') {
-                actionsHtml += `<button data-action="share" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">🔗 Partager</button>`;
-            }
-            actionsHtml += `<button data-action="delete" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">🗑️ Supprimer</button>`;
         }
-        actionsHtml += `<button data-action="print" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">🖨️ Imprimer</button>`;
-        actionsHtml += `</div>`;
-        detailsHtml += actionsHtml;
+        actionsHtml += '</div>';
 
-        const historyHtml = (entry.historique || []).slice().reverse().map(line => `<li>• ${line}</li>`).join('');
-        detailsHtml += `<div class="historique text-sm text-gray-600 mt-6 bg-gray-100 p-4 border-l-4 border-blue-600 rounded-md max-h-40 overflow-y-auto"><strong>Historique :</strong><ul class="list-none pl-0 mt-2">${historyHtml}</ul></div>`;
-
-        return detailsHtml;
-    }    function renderCourseItems(container, items) {
-        container.innerHTML = items.map((item, index) => `
-            <div class="course-item flex items-center justify-between p-2 hover:bg-gray-100 rounded-md">
-                <label class="flex items-center cursor-pointer">
-                    <input type="checkbox" data-item-index="${index}" ${item.completed ? 'checked' : ''} class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                    <span class="ml-3 text-gray-700">${item.text}</span>
-                </label>
-                <button data-action="delete-course-item" data-item-index="${index}" class="text-gray-400 hover:text-red-500">🗑️</button>
+        const modalTitle = isNew ? `Ajouter un élément` : `Modifier: ${data.titre}`;
+        const finalContent = `
+            <div class="flex-shrink-0 p-4 border-b dark:border-gray-700 flex justify-between items-center">
+                <h3 class="text-xl font-bold">${modalTitle}</h3>
+                <button class="modal-close-btn text-3xl font-bold text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">&times;</button>
             </div>
-        `).join('');
+            <div class="p-4 flex-grow overflow-y-auto flex flex-col" id="modal-form-content">
+                ${formHtml}
+                ${historyHtml}
+            </div>
+            <div class="flex-shrink-0 p-4 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                ${actionsHtml}
+            </div>
+        `;
+
+        const maxWidth = [COLLECTIONS.NOTES_REUNION, COLLECTIONS.NOTES_PERSO, COLLECTIONS.VOYAGES].includes(type) ? 'max-w-4xl' : 'max-w-2xl';
+        showModal(finalContent, maxWidth);
+        
+        if (type === COLLECTIONS.COURSES) {
+            renderCourseItems(data.items || [], isNew ? null : entry.id);
+        }
+        if (isReadOnly) {
+            modalContainer.querySelectorAll('input, textarea').forEach(el => el.disabled = true);
+        }
+
+        attachModalListeners(entry, type);
     }
-    
+
+    function attachModalListeners(entry, type) {
+        const isNew = !entry;
+        
+        const rangeInput = modalContainer.querySelector('input[type="range"]');
+        if(rangeInput) {
+            rangeInput.addEventListener('input', (e) => {
+                document.getElementById('pct-label').textContent = `${e.target.value}%`;
+            });
+        }
+
+        if (isNew) {
+            document.getElementById('save-btn').onclick = () => saveEntry(null, type);
+        } else {
+            const deleteBtn = modalContainer.querySelector('[data-action="delete"]');
+            if(deleteBtn) deleteBtn.onclick = () => deleteEntry(type, entry.id);
+            
+            const shareBtn = modalContainer.querySelector('[data-action="share"]');
+            if(shareBtn) shareBtn.onclick = () => shareEntry(type, entry.id);
+
+            const toggleCompleteBtn = modalContainer.querySelector('[data-action="toggleComplete"]');
+            if(toggleCompleteBtn) toggleCompleteBtn.onclick = () => markAsCompleted(type, entry.id, !entry.isCompleted);
+        }
+
+        if (type === COLLECTIONS.COURSES && entry) {
+            const addBtn = document.getElementById('add-course-item-btn');
+            const addInput = document.getElementById('new-course-item-input');
+            addBtn.onclick = () => addOrUpdateCourseItem(entry.id);
+            addInput.onkeydown = (e) => { if(e.key === 'Enter') { e.preventDefault(); addOrUpdateCourseItem(entry.id); }};
+        }
+
+        modalContainer.querySelectorAll('[data-field]').forEach(input => {
+            if (input.tagName.toLowerCase() === 'textarea') {
+                input.style.overflowY = 'hidden';
+                autoResizeTextarea(input);
+                input.addEventListener('input', () => autoResizeTextarea(input));
+            }
+
+            if (!isNew) {
+                input.addEventListener('blur', (e) => {
+                    handleUpdate(type, entry.id, e.target.dataset.field, e.target.value);
+                });
+            }
+        });
+        
+        if (!isNew && rangeInput) {
+            rangeInput.addEventListener('change', (e) => {
+                handleUpdate(type, entry.id, e.target.dataset.field, e.target.value);
+            });
+        }
+    }
+
     // --- CRUD OPERATIONS ---
-    async function addEntry(collectionName) {
-        if (!userId || !expandedCard) return;
-        const titre = expandedCard.querySelector('#new-titre').value.trim();
-        if (!titre) {
-            showToastNotification("Le titre est obligatoire.", "error");
+    async function saveEntry(id, collectionName) {
+        const isNew = !id;
+        const form = document.getElementById('modal-form-content');
+        const titreInput = form.querySelector('[data-field="titre"]');
+
+        if (!titreInput || !titreInput.value.trim()) {
+            showToast("Le titre est obligatoire.", "error");
             return;
         }
-        const newEntry = {
-            titre,
-            historique: [`Créé le ${getTimeStamp()}`],
-            createdAt: new Date().toISOString()
-        };
 
-        const tagsInput = expandedCard.querySelector('#new-tags');
-        if (tagsInput) {
-            newEntry.tags = tagsInput.value.split(',').map(t => t.trim()).filter(Boolean);
-        }
+        let newEntryData = {};
+        form.querySelectorAll('[data-field]').forEach(input => {
+            const field = input.dataset.field;
+            let value = input.value;
+            if (field === 'tags') value = value.split(',').map(t => t.trim()).filter(Boolean);
+            if (input.type === 'range') value = parseInt(value, 10);
+            newEntryData[field] = value;
+        });
 
-        if (collectionName === COLLECTIONS_PRO.OBJECTIFS) {
-            newEntry.description = expandedCard.querySelector('#new-description').value.trim();
-            newEntry.pourcentage = parseInt(expandedCard.querySelector('#new-pourcentage').value) || 0;
-        } else if (collectionName === COLLECTIONS_PRO.ACTIONS) {
-            newEntry.contenu = expandedCard.querySelector('#new-contenu').value.trim();
-            newEntry.deadLine = expandedCard.querySelector('#new-deadLine').value || '';
-            newEntry.isCompleted = false;
-        } else if ([COLLECTIONS_PRO.NOTES_REUNION, COLLECTIONS_PERSO.NOTES, COLLECTIONS_PERSO.VOYAGES].includes(collectionName)) {
-            newEntry.contenu = expandedCard.querySelector('#new-contenu').value.trim();
-        } else if ([COLLECTIONS_PERSO.TODO].includes(collectionName)) {
-            newEntry.contenu = expandedCard.querySelector('#new-contenu').value.trim();
-            newEntry.isCompleted = false;
-        } else if (collectionName === COLLECTIONS_PERSO.COURSES) {
-            newEntry.items = expandedCard.querySelector('#new-items').value.split('\n').map(text => ({ text: text.trim(), completed: false })).filter(item => item.text);
+        if (isNew) {
+            newEntryData.historique = [`Créé le ${getTimeStamp()}`];
+            newEntryData.createdAt = new Date().toISOString();
+            if (collectionName === COLLECTIONS.ACTIONS || collectionName === COLLECTIONS.TODO) {
+                newEntryData.isCompleted = false;
+            }
+            if (collectionName === COLLECTIONS.COURSES) {
+                newEntryData.items = []; 
+            }
         }
 
         try {
-            const path = `artifacts/${firebaseConfig.appId}/users/${userId}/${collectionName}`;
-            await addDoc(collection(db, path), newEntry);
-            showToastNotification("Élément ajouté avec succès !", 'success');
-            closeExpandedCard();
+            const path = `artifacts/${appId}/users/${userId}/${collectionName}`;
+            if (isNew) {
+                await addDoc(collection(db, path), newEntryData);
+                showToast("Élément ajouté !", 'success');
+            }
+            hideModal();
         } catch (error) {
-            console.error("Error adding document: ", error);
-            showToastNotification("Erreur lors de l'ajout.", "error");
+            console.error("Erreur d'enregistrement:", error);
+            showToast("Erreur lors de l'enregistrement.", "error");
         }
     }
 
     async function handleUpdate(collectionName, id, field, value) {
         if (!userId) return;
-        const path = `artifacts/${firebaseConfig.appId}/users/${userId}/${collectionName}`;
+        const path = `artifacts/${appId}/users/${userId}/${collectionName}`;
         const docRef = doc(db, path, id);
         try {
             const docSnap = await getDoc(docRef);
             if (!docSnap.exists()) return;
-            
+
             let updateValue = value;
-            if (field === 'tags') {
-                updateValue = value.split(',').map(t => t.trim()).filter(Boolean);
-            } else if (field === 'pourcentage') {
-                updateValue = parseInt(value, 10);
-            }
+            if (field === 'tags') updateValue = value.split(',').map(t => t.trim()).filter(Boolean);
+            if (field === 'pourcentage') updateValue = parseInt(value, 10);
 
             const newHistoryEntry = `Champ '${field}' mis à jour le ${getTimeStamp()}`;
             const updates = {
@@ -800,44 +753,29 @@ function buildDetailView(entry, type, isReadOnly) {
                 historique: [...(docSnap.data().historique || []), newHistoryEntry]
             };
             await updateDoc(docRef, updates);
-            showToastNotification("Mise à jour réussie.", 'success');
+            showToast("Mise à jour enregistrée.", 'success');
         } catch (error) {
-            console.error("Error updating document: ", error);
-            showToastNotification("Erreur de mise à jour.", "error");
+            console.error("Erreur de mise à jour:", error);
+            showToast("Erreur de mise à jour.", "error");
         }
     }
-
-    async function updateCourseItems(id, newItems) {
-        if (!userId) return;
-        const path = `artifacts/${firebaseConfig.appId}/users/${userId}/${COLLECTIONS_PERSO.COURSES}`;
-        const docRef = doc(db, path, id);
-        try {
-            await updateDoc(docRef, { items: newItems });
-        } catch(e) {
-            console.error("Error updating course items: ", e);
-            showToastNotification("Erreur de mise à jour des articles.", "error");
-        }
-    }
-
+    
     async function deleteEntry(collectionName, id) {
-        if (!userId) return;
-        const confirmed = await showConfirmationModal("Êtes-vous sûr de vouloir supprimer cet élément définitivement ?");
+        const confirmed = await showConfirmationModal("Supprimer cet élément définitivement ?");
         if (confirmed) {
-            const path = `artifacts/${firebaseConfig.appId}/users/${userId}/${collectionName}`;
+            const path = `artifacts/${appId}/users/${userId}/${collectionName}`;
             try {
                 await deleteDoc(doc(db, path, id));
-                showToastNotification("Élément supprimé.", 'success');
-                closeExpandedCard();
+                showToast("Élément supprimé.", 'success');
+                hideModal();
             } catch (error) {
-                console.error("Error deleting document: ", error);
-                showToastNotification("Erreur de suppression.", "error");
+                showToast("Erreur de suppression.", "error");
             }
         }
     }
 
     async function markAsCompleted(collectionName, id, isCompleted) {
-        if (!userId) return;
-        const path = `artifacts/${firebaseConfig.appId}/users/${userId}/${collectionName}`;
+        const path = `artifacts/${appId}/users/${userId}/${collectionName}`;
         const docRef = doc(db, path, id);
         try {
             const docSnap = await getDoc(docRef);
@@ -847,177 +785,118 @@ function buildDetailView(entry, type, isReadOnly) {
                 isCompleted,
                 historique: [...(docSnap.data().historique || []), newHistoryEntry]
             });
-            showToastNotification(`Action mise à jour.`, 'success');
-            closeExpandedCard();
+            showToast(`Action mise à jour.`, 'success');
+            hideModal();
         } catch (error) {
-            console.error("Error updating completion: ", error);
-            showToastNotification("Erreur de mise à jour.", "error");
+            showToast("Erreur de mise à jour.", "error");
+        }
+    }
+    
+    async function shareEntry(collectionName, id) {
+        const publicDocPath = `artifacts/${appId}/public/data/${COLLECTIONS.SHARED_ENTRIES}`;
+        const userDocPath = `artifacts/${appId}/users/${userId}/${collectionName}/${id}`;
+        try {
+            const docSnap = await getDoc(doc(db, userDocPath));
+            if (docSnap.exists()) {
+                const dataToShare = {
+                    ...docSnap.data(),
+                    originalCollection: collectionName,
+                    originalUserId: userId,
+                    sharedAt: getTimeStamp()
+                };
+                await addDoc(collection(db, publicDocPath), dataToShare);
+                showToast("Élément partagé avec succès !", 'success');
+            }
+        } catch (error) {
+            showToast("Erreur lors du partage.", "error");
         }
     }
 
-    async function shareEntry(collectionName, id) {
-        if (!userId) return;
-        const confirmed = await showConfirmationModal("Partager cet élément le rendra visible publiquement. Continuer ?");
-        if (confirmed) {
-            const userDocPath = `artifacts/${firebaseConfig.appId}/users/${userId}/${collectionName}/${id}`;
-            const publicDocPath = `artifacts/${firebaseConfig.appId}/public/data/${COLLECTIONS_PRO.SHARED_ENTRIES}`;
-            try {
-                const docSnap = await getDoc(doc(db, userDocPath));
-                if (docSnap.exists()) {
-                    const dataToShare = {
-                        ...docSnap.data(),
-                        originalCollection: collectionName,
-                        originalUserId: userId,
-                        sharedAt: getTimeStamp()
-                    };
-                    await addDoc(collection(db, publicDocPath), dataToShare);
-                    showToastNotification("Élément partagé avec succès !", 'success');
-                }
-            } catch (error) {
-                console.error("Error sharing document: ", error);
-                showToastNotification("Erreur lors du partage.", "error");
+    // --- LOGIQUE SPÉCIFIQUE LISTE DE COURSES ---
+    function renderCourseItems(items, docId) {
+        const container = document.getElementById('course-items-list');
+        if (!container) return;
+        container.innerHTML = (items || []).map((item, index) => `
+            <div class="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" data-item-index="${index}" ${item.completed ? 'checked' : ''} class="h-5 w-5 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 bg-transparent">
+                    <span class="ml-3 text-gray-700 dark:text-gray-300 ${item.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''}">${item.text}</span>
+                </label>
+                <button data-action="delete-course-item" data-item-index="${index}" class="text-gray-400 hover:text-red-500 text-xl">🗑️</button>
+            </div>
+        `).join('');
+
+        if(docId) {
+            container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.onchange = (e) => addOrUpdateCourseItem(docId, parseInt(e.target.dataset.itemIndex), e.target.checked);
+            });
+            container.querySelectorAll('[data-action="delete-course-item"]').forEach(btn => {
+                btn.onclick = (e) => addOrUpdateCourseItem(docId, parseInt(e.currentTarget.dataset.itemIndex), null, true);
+            });
+        }
+    }
+
+    async function addOrUpdateCourseItem(docId, indexToUpdate = null, isCompleted = null, toDelete = false) {
+        if (!docId) {
+            showToast("Veuillez d'abord enregistrer la nouvelle liste.", "info");
+            return;
+        }
+
+        const docRef = doc(db, `artifacts/${appId}/users/${userId}/${COLLECTIONS.COURSES}`, docId);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) return;
+
+        let currentItems = docSnap.data().items || [];
+        
+        if (toDelete && indexToUpdate !== null) {
+            currentItems.splice(indexToUpdate, 1);
+        } else if (indexToUpdate !== null) {
+            currentItems[indexToUpdate].completed = isCompleted;
+        } else {
+            const input = document.getElementById('new-course-item-input');
+            const newItemText = input.value.trim();
+            if (newItemText) {
+                currentItems.push({ text: newItemText, completed: false });
+                input.value = '';
+                input.focus();
+            } else {
+                return;
             }
         }
+        
+        await updateDoc(docRef, { items: currentItems });
+        renderCourseItems(currentItems, docId);
     }
 
 
-    // --- EVENT LISTENERS ---
+    // --- EVENT LISTENERS INITIAUX ---
     function initializeEventListeners() {
-        // --- Auth Buttons ---
-        document.getElementById('signInEmailBtn').addEventListener('click', async () => {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            try { await signInWithEmailAndPassword(auth, email, password); showToastNotification('Connexion réussie !', 'success'); } 
-            catch (error) { showToastNotification(`Erreur: ${error.code}`, 'error'); }
-        });
-        document.getElementById('signUpEmailBtn').addEventListener('click', async () => {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            try { await createUserWithEmailAndPassword(auth, email, password); showToastNotification('Inscription réussie !', 'success'); } 
-            catch (error) { showToastNotification(`Erreur: ${error.code}`, 'error'); }
-        });
-        document.getElementById('signInGoogleBtn').addEventListener('click', async () => {
-            try { await signInWithPopup(auth, googleProvider); showToastNotification('Connexion Google réussie !', 'success'); } 
-            catch (error) { showToastNotification(`Erreur: ${error.code}`, 'error'); }
-        });
-        document.getElementById('signOutBtn').addEventListener('click', () => signOut(auth).then(() => showToastNotification('Déconnecté.', 'info')));
-
-        // --- Static UI Elements ---
-        document.getElementById('authBtn').addEventListener('click', openAuthModal);
-        authModal.querySelector('.close-button').addEventListener('click', closeAuthModal);
-        overlay.addEventListener('click', () => { closeAuthModal(); closeExpandedCard(); });
+        document.getElementById('authBtn').addEventListener('click', showAuthModal);
+        document.getElementById('signOutBtn').addEventListener('click', () => signOut(auth).then(() => showToast('Déconnecté.', 'info')));
+        document.getElementById('preferencesBtn').addEventListener('click', showPreferencesModal);
         
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) hideModal();
+        });
         modeSelector.addEventListener('click', e => {
             const button = e.target.closest('button');
             if(button) setMode(button.dataset.mode);
         });
-
-        navPro.addEventListener('click', e => {
+        mainNav.addEventListener('click', e => {
             const button = e.target.closest('.nav-button');
             if (button) showPage(button.dataset.target);
         });
-        navPerso.addEventListener('click', e => {
-            const button = e.target.closest('.nav-button');
-            if (button) showPage(button.dataset.target);
+        pageContent.addEventListener('input', e => {
+            if(e.target.matches('.searchBar')) renderCurrentPageContent();
         });
-
-        // --- Event Delegation for Dynamic Content ---
-        mainContent.addEventListener('input', e => {
-             if(e.target.matches('.searchBar')) {
-                triggerRenderForCurrentPage();
-             }
-        });
-        
-        mainContent.addEventListener('click', e => {
-            const card = e.target.closest('.card:not(.expanded-card)');
+        pageContent.addEventListener('click', e => {
+            const card = e.target.closest('.card');
             if (card) {
-                if (!e.target.closest('button, a, input, textarea, [contenteditable]')) {
-                    toggleCardExpansion(card);
-                }
-                return;
-            }
-
-            const addNewButton = e.target.closest('.add-new-item-btn');
-            if (addNewButton) {
-                openNewItemModal(addNewButton.dataset.type);
-                return;
-            }
-
-            if (expandedCard) {
-                const actionButton = e.target.closest('[data-action]');
-                if (actionButton) {
-                    const { action, value } = actionButton.dataset;
-                    const { id, type } = expandedCard.dataset;
-                    switch(action) {
-                        case 'delete': deleteEntry(type, id); break;
-                        case 'share': shareEntry(type, id); break;
-                        case 'print': window.print(); break;
-                        case 'markAsCompleted': markAsCompleted(type, id, value === 'true'); break;
-                        case 'delete-course-item': {
-                            const entry = allDataCache[type].find(item => item.id === id);
-                            if(entry) {
-                                const itemIndex = parseInt(actionButton.dataset.itemIndex, 10);
-                                const newItems = entry.items.filter((_, index) => index !== itemIndex);
-                                updateCourseItems(id, newItems);
-                                // Refresh view locally
-                                const listContainer = expandedCard.querySelector('.courses-list');
-                                if(listContainer) renderCourseItems(listContainer, newItems);
-                            }
-                            break;
-                        }
-                    }
-                }
+                const config = NAV_CONFIG[currentMode].find(p => p.id === currentPageId);
+                const entry = allDataCache[config.type]?.find(item => item.id === card.dataset.id);
+                if(entry) showItemModal(entry, config.type);
             }
         });
-        
-        document.body.addEventListener('submit', e => {
-            if (expandedCard && e.target.matches('.add-course-item-form')) {
-                e.preventDefault();
-                const input = e.target.querySelector('input');
-                const newItemText = input.value.trim();
-                if (newItemText) {
-                    const { id, type } = expandedCard.dataset;
-                    const entry = allDataCache[type].find(item => item.id === id);
-                    if (entry) {
-                        const newItems = [...(entry.items || []), { text: newItemText, completed: false }];
-                        updateCourseItems(id, newItems);
-                        // Refresh view locally
-                        const listContainer = expandedCard.querySelector('.courses-list');
-                        if(listContainer) renderCourseItems(listContainer, newItems);
-                        input.value = '';
-                        input.focus();
-                    }
-                }
-            }
-        });
-
-        document.body.addEventListener('change', e => {
-            if (expandedCard && e.target.matches('[data-field="pourcentage"]')) {
-                const field = e.target.dataset.field;
-                const value = e.target.value;
-                const { id, type } = expandedCard.dataset;
-                handleUpdate(type, id, field, value);
-            }
-            if (expandedCard && e.target.matches('.course-item input[type="checkbox"]')) {
-                const { id, type } = expandedCard.dataset;
-                const entry = allDataCache[type].find(item => item.id === id);
-                if (entry) {
-                    const itemIndex = parseInt(e.target.dataset.itemIndex, 10);
-                    const newItems = [...entry.items];
-                    newItems[itemIndex].completed = e.target.checked;
-                    updateCourseItems(id, newItems);
-                }
-            }
-        });
-        
-        document.body.addEventListener('blur', e => {
-            if (expandedCard && e.target.matches('.editable-field, [data-field="deadLine"], [data-field="tags"]')) {
-                const field = e.target.dataset.field;
-                const value = e.target.value;
-                const { id, type } = expandedCard.dataset;
-                handleUpdate(type, id, field, value);
-            }
-        }, true); // Use capture to ensure it fires
     }
 
     // --- Initialisation au chargement de la page ---
